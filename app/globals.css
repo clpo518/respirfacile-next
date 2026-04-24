@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -9,17 +11,70 @@
     padding: 0;
   }
   html {
-    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
   body {
-    background-color: #ffffff;
-    color: #111827;
+    background-color: #f7f3ec;
+    color: #1f2a1c;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-forest-500 px-8 py-4 text-base font-semibold text-beige-100 hover:bg-forest-600 transition-all duration-200 shadow-forest;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-forest-500 px-8 py-4 text-base font-semibold text-forest-600 hover:bg-forest-500 hover:text-beige-100 transition-all duration-200;
+  }
+
+  .btn-copper {
+    @apply inline-flex items-center justify-center rounded-full bg-copper-500 px-8 py-4 text-base font-semibold text-white hover:bg-copper-600 transition-all duration-200 shadow-md;
+  }
+
+  .card {
+    @apply rounded-3xl bg-beige-100 border border-beige-300 shadow-beige p-8;
+  }
+
+  .section {
+    @apply w-full py-20 md:py-28 px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-lg {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .heading-display {
+    @apply font-display text-forest-800;
   }
 }
 
 @layer utilities {
-  .animate-ping-slow {
-    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  .bg-texture {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a5d43' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  .animate-breathe-slow {
+    animation: breathe 6s ease-in-out infinite;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }

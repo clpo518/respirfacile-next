@@ -67,73 +67,90 @@ export default function PricingPage() {
     <div className="w-full">
       <Navbar />
       <main className="w-full">
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-teal-50 to-white">
+        {/* Hero pricing */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-beige-200 bg-texture">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Tarifs transparents
+            <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">Tarifs</p>
+            <h1 className="font-display text-5xl md:text-6xl font-bold text-forest-800 mb-6 text-balance">
+              Simple et transparent
             </h1>
-            <p className="text-xl text-gray-600 mb-4">
+            <p className="text-lg text-forest-600 mb-3 max-w-xl mx-auto">
               30 jours d&apos;essai gratuit · Sans carte bancaire · Annulable à tout moment
             </p>
-            <p className="text-teal-600 font-semibold">
+            <p className="text-sm font-semibold text-forest-700 bg-forest-500/10 border border-forest-500/20 inline-block rounded-full px-4 py-1.5">
               Les patients accèdent toujours gratuitement via votre code Pro
             </p>
           </div>
         </section>
 
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Plans */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-300">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-3xl p-8 border-2 ${
+                className={`rounded-4xl p-8 border-2 relative overflow-hidden transition-transform hover:-translate-y-1 duration-200 ${
                   plan.highlighted
-                    ? "border-teal-500 bg-teal-50 shadow-xl shadow-teal-100"
-                    : "border-gray-200 bg-white"
+                    ? "border-forest-500 bg-beige-100 shadow-forest-lg"
+                    : "border-beige-300 bg-beige-100 shadow-beige"
                 }`}
               >
+                {/* Top accent bar */}
                 {plan.highlighted && (
-                  <div className="inline-block rounded-full bg-teal-600 px-4 py-1 text-sm font-semibold text-white mb-4">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest-400 to-copper-400" />
+                )}
+
+                {plan.highlighted && (
+                  <div className="inline-block rounded-full bg-forest-500 px-4 py-1 text-xs font-semibold text-beige-100 mb-4">
                     Le plus populaire
                   </div>
                 )}
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+
+                <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">
                   {plan.name}
                 </h2>
-                <p className="text-gray-500 text-sm mb-4">{plan.description}</p>
+                <p className="text-forest-500 text-sm mb-6">{plan.description}</p>
+
                 <div className="mb-6">
-                  <span className="text-5xl font-bold text-gray-900">
+                  <span className="font-display text-5xl font-bold text-forest-800">
                     {plan.price}€
                   </span>
-                  <span className="text-gray-500">/mois</span>
-                  <p className="text-sm text-teal-600 mt-1">
+                  <span className="text-forest-500 text-sm">/mois</span>
+                  <p className="text-xs text-copper-500 mt-1 font-medium">
                     ou {plan.priceAnnual}€/mois en annuel
                   </p>
                 </div>
-                <div className="rounded-xl bg-gray-100 px-4 py-2 text-center mb-6">
-                  <span className="font-semibold text-gray-700">
+
+                <div className="rounded-2xl bg-forest-500/8 border border-forest-500/15 px-4 py-2.5 text-center mb-6">
+                  <span className="font-semibold text-forest-700 text-sm">
                     {plan.patients}
                   </span>
                 </div>
+
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-700">
-                      <span className="text-teal-500 font-bold mt-0.5">✓</span>
+                    <li key={f} className="flex items-start gap-3 text-sm text-forest-700">
+                      <div className="w-4 h-4 rounded-full bg-forest-500/15 border border-forest-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-2.5 h-2.5 text-forest-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
                       {f}
                     </li>
                   ))}
                 </ul>
+
                 <Link
                   href={`/auth?mode=signup&role=therapist&plan=${plan.name.toLowerCase()}`}
-                  className={`block w-full text-center rounded-full py-3 font-semibold transition-colors ${
+                  className={`block w-full text-center rounded-full py-3.5 text-sm font-semibold transition-colors ${
                     plan.highlighted
-                      ? "bg-teal-600 text-white hover:bg-teal-700"
-                      : "bg-gray-900 text-white hover:bg-gray-700"
+                      ? "bg-forest-500 text-beige-100 hover:bg-forest-600 shadow-forest"
+                      : "bg-forest-800 text-beige-200 hover:bg-forest-700"
                   }`}
                 >
                   {plan.cta}
                 </Link>
-                <p className="text-center text-xs text-gray-400 mt-3">
+                <p className="text-center text-xs text-forest-400 mt-3">
                   30 jours gratuits · Sans CB
                 </p>
               </div>
@@ -141,18 +158,18 @@ export default function PricingPage() {
           </div>
         </section>
 
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        {/* Contact */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-200">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="font-display text-2xl font-bold text-forest-800 mb-4">
               Des questions sur les tarifs ?
             </h2>
-            <p className="text-gray-600 mb-6">
-              Vous avez un grand cabinet, une structure hospitalière ou des
-              besoins spécifiques ? Contactez-nous.
+            <p className="text-forest-600 mb-6 text-sm">
+              Grand cabinet, structure hospitalière ou besoins spécifiques ? Contactez-nous.
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center rounded-full border-2 border-teal-600 px-8 py-3 text-teal-600 font-semibold hover:bg-teal-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-full border-2 border-forest-500 px-8 py-3 text-forest-700 font-semibold hover:bg-forest-500 hover:text-beige-100 transition-colors text-sm"
             >
               Nous contacter
             </Link>

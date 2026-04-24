@@ -17,34 +17,42 @@ const faqs = [
   },
   {
     q: "Combien de temps par jour ?",
-    a: "15 à 20 minutes par jour maximum. Au-delà, c'est contre-productif (risque d'hyperventilation compensatoire). Les exercices sont conçus pour s'intégrer dans la routine quotidienne.",
+    a: "15 à 20 minutes par jour maximum. Au-delà, c'est contre-productif. Les exercices sont conçus pour s'intégrer dans la routine quotidienne.",
   },
   {
     q: "Comment fonctionne l'essai gratuit ?",
-    a: "L'orthophoniste bénéficie de 30 jours d'essai complet sans carte bancaire. À la fin de l'essai, il peut choisir son plan (Starter 15€, Pro 25€, Cabinet 49€) et saisir sa carte.",
+    a: "L'orthophoniste bénéficie de 30 jours d'essai complet sans carte bancaire. À la fin de l'essai, il peut choisir son plan (Starter 15€, Pro 25€, Cabinet 49€).",
   },
 ];
 
 export function FAQSection() {
   return (
-    <section className="w-full py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="w-full py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-beige-300">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-14">
+          <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">FAQ</p>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-forest-800">
             Questions fréquentes
           </h2>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq) => (
+        <div className="space-y-3">
+          {faqs.map((faq, i) => (
             <div
               key={faq.q}
-              className="rounded-2xl bg-white border border-gray-200 p-6"
+              className="rounded-3xl bg-beige-100 border border-beige-300 p-6 shadow-beige hover:shadow-forest transition-shadow duration-200"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                {faq.q}
-              </h3>
-              <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+              <div className="flex items-start gap-4">
+                <span className="text-xs font-bold text-copper-400 mt-1 flex-shrink-0 font-display">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="text-base font-semibold text-forest-800 mb-2">
+                    {faq.q}
+                  </h3>
+                  <p className="text-forest-600 leading-relaxed text-sm">{faq.a}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>

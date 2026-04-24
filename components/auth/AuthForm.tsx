@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export function AuthForm() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export function AuthForm() {
         });
         if (error) throw error;
         setSuccess(
-          "Vérifiez votre email pour confirmer votre compte. Vous serez redirigé automatiquement."
+          "Vérifiez votre email pour confirmer votre compte."
         );
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -63,39 +64,51 @@ export function AuthForm() {
     }
   };
 
-  return (
-    <div className="bg-white rounded-3xl shadow-xl shadow-gray-100 border border-gray-100 p-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        {isSignup
-          ? role === "therapist"
-            ? "Créer un compte orthophoniste"
-            : "Rejoindre avec un code Pro"
-          : "Connexion"}
-      </h1>
-      <p className="text-gray-500 text-sm mb-6">
-        {isSignup && role === "therapist"
-          ? "30 jours gratuits · Sans carte bancaire"
-          : isSignup
-          ? "Votre orthophoniste vous a transmis un code"
-          : "Bienvenue sur Respirfacile"}
-      </p>
+  const isTherapistSignup = isSignup && role === "therapist";
 
+  return (
+    <div className="bg-beige-100 rounded-4xl shadow-forest-lg border border-beige-300 p-8 md:p-10">
+      {/* Header */}
+      <div className="mb-8">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6 text-forest-500 hover:text-forest-700 transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span className="text-sm font-medium">Accueil</span>
+        </Link>
+
+        <h1 className="font-display text-3xl font-bold text-forest-800 mb-2">
+          {isSignup
+            ? isTherapistSignup
+              ? "Créer un compte orthophoniste"
+              : "Rejoindre avec un code Pro"
+            : "Connexion"}
+        </h1>
+        <p className="text-forest-500 text-sm">
+          {isTherapistSignup
+            ? "30 jours gratuits · Sans carte bancaire"
+            : isSignup
+            ? "Votre orthophoniste vous a transmis un code"
+            : "Bienvenue sur Respirfacile"}
+        </p>
+      </div>
+
+      {/* Alerts */}
       {error && (
-        <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
-
       {success && (
-        <div className="mb-4 rounded-xl bg-teal-50 border border-teal-200 p-4 text-sm text-teal-700">
+        <div className="mb-6 rounded-2xl bg-forest-500/10 border border-forest-500/20 p-4 text-sm text-forest-700">
           {success}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {isSignup && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-forest-700 mb-1.5">
               Nom complet
             </label>
             <input
@@ -103,14 +116,14 @@ export function AuthForm() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full rounded-2xl border border-beige-400 bg-beige-50 px-4 py-3 text-sm text-forest-800 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 transition-colors"
               placeholder="Dr. Marie Martin"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-forest-700 mb-1.5">
             Email
           </label>
           <input
@@ -118,13 +131,13 @@ export function AuthForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full rounded-2xl border border-beige-400 bg-beige-50 px-4 py-3 text-sm text-forest-800 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 transition-colors"
             placeholder="vous@exemple.fr"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-forest-700 mb-1.5">
             Mot de passe
           </label>
           <input
@@ -133,21 +146,21 @@ export function AuthForm() {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full rounded-2xl border border-beige-400 bg-beige-50 px-4 py-3 text-sm text-forest-800 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 transition-colors"
             placeholder="••••••••"
           />
         </div>
 
-        {isSignup && role !== "therapist" && (
+        {isSignup && !isTherapistSignup && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-forest-700 mb-1.5">
               Code Pro de votre orthophoniste
             </label>
             <input
               type="text"
               value={proCode}
               onChange={(e) => setProCode(e.target.value.toUpperCase())}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full rounded-2xl border border-beige-400 bg-beige-50 px-4 py-3 text-sm font-mono text-forest-800 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 transition-colors"
               placeholder="PRO-XXXXXX"
             />
           </div>
@@ -156,7 +169,7 @@ export function AuthForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-teal-600 py-3.5 text-sm font-semibold text-white hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-full bg-forest-500 py-4 text-sm font-semibold text-beige-100 hover:bg-forest-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-forest mt-2"
         >
           {loading
             ? "Chargement..."
@@ -170,13 +183,21 @@ export function AuthForm() {
         <button
           type="button"
           onClick={() => setIsSignup(!isSignup)}
-          className="text-sm text-gray-500 hover:text-teal-600 transition-colors"
+          className="text-sm text-forest-500 hover:text-forest-700 transition-colors"
         >
           {isSignup
             ? "Déjà un compte ? Se connecter"
             : "Pas encore de compte ? S'inscrire"}
         </button>
       </div>
+
+      {isTherapistSignup && (
+        <div className="mt-6 pt-6 border-t border-beige-300 text-center">
+          <p className="text-xs text-forest-400">
+            Sans carte bancaire · Annulable à tout moment · RGPD
+          </p>
+        </div>
+      )}
     </div>
   );
 }

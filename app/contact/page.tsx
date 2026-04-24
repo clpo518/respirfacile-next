@@ -10,31 +10,39 @@ export default function ContactPage() {
   return (
     <div className="w-full">
       <Navbar />
-      <main className="max-w-2xl mx-auto px-4 py-16 sm:py-24">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact</h1>
-        <p className="text-xl text-gray-600 mb-10">
-          Une question, un partenariat, un retour terrain ? Écrivez-nous.
-        </p>
-        <div className="space-y-6">
-          <div className="rounded-2xl bg-teal-50 border border-teal-200 p-6">
-            <p className="font-semibold text-teal-800 mb-1">Email</p>
-            <a
-              href="mailto:clement@respirfacile.fr"
-              className="text-teal-600 hover:underline"
-            >
-              clement@respirfacile.fr
-            </a>
-          </div>
-          <div className="rounded-2xl bg-gray-50 border border-gray-200 p-6">
-            <p className="font-semibold text-gray-800 mb-2">
-              Orthophonistes & kinésithérapeutes
-            </p>
-            <p className="text-gray-600 text-sm">
-              Vous souhaitez tester Respirfacile avec vos patients ? Commencez
-              l&apos;essai gratuit 30 jours directement — aucune démarche administrative.
+      <main className="w-full">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-beige-200 bg-texture">
+          <div className="max-w-2xl mx-auto">
+            <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">Contact</p>
+            <h1 className="font-display text-5xl font-bold text-forest-800 mb-4">On vous répond.</h1>
+            <p className="text-lg text-forest-600">
+              Une question, un partenariat, un retour terrain ? Écrivez-nous.
             </p>
           </div>
-        </div>
+        </section>
+
+        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-beige-300">
+          <div className="max-w-2xl mx-auto space-y-4">
+            <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-beige p-8">
+              <p className="text-xs font-semibold text-copper-500 uppercase tracking-widest mb-2">Email</p>
+              <a
+                href="mailto:clement@respirfacile.fr"
+                className="text-forest-700 hover:text-forest-900 font-semibold text-lg transition-colors"
+              >
+                clement@respirfacile.fr
+              </a>
+            </div>
+            <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-beige p-8">
+              <p className="font-semibold text-forest-800 mb-2">
+                Orthophonistes & kinésithérapeutes
+              </p>
+              <p className="text-forest-600 text-sm leading-relaxed">
+                Vous souhaitez tester Respirfacile avec vos patients ? Commencez
+                l&apos;essai gratuit 30 jours directement — aucune démarche administrative.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
