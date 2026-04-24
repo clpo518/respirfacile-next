@@ -6,7 +6,7 @@ import { Footer } from "@/components/landing/Footer";
 export const metadata: Metadata = {
   title: "Tarifs — Respirfacile",
   description:
-    "Starter 15€/mois · Pro 25€/mois · Cabinet 49€/mois. 30 jours d'essai gratuit sans carte bancaire. Patients accèdent gratuitement.",
+    "Starter 15€/mois · Pro 30€/mois · Cabinet 55€/mois. 30 jours d'essai gratuit sans carte bancaire. Patients accèdent gratuitement.",
 };
 
 const plans = [
@@ -28,8 +28,8 @@ const plans = [
   },
   {
     name: "Pro",
-    price: 25,
-    priceAnnual: 20,
+    price: 30,
+    priceAnnual: 24,
     patients: "20 patients",
     description: "Pour les orthophonistes avec une patientèle SAOS active",
     features: [
@@ -45,8 +45,8 @@ const plans = [
   },
   {
     name: "Cabinet",
-    price: 49,
-    priceAnnual: 39,
+    price: 55,
+    priceAnnual: 44,
     patients: "Illimité",
     description: "Pour les cabinets multi-praticiens",
     features: [

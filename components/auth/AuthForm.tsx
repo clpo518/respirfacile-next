@@ -49,16 +49,36 @@ export function AuthForm() {
           "Vérifiez votre email pour confirmer votre compte."
         );
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        router.push("/dashboard");
+        // Redirect based on role
+        const userRole = data.user?.user_metadata?.role;
+        if (userRole === "therapist" || userRole === "kine") {
+          router.push("/therapist");
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      const msg = err instanceof Error ? err.message : "Une erreur est survenue";
+      // Translate common Supabase error messages to French
+      if (msg.includes("Invalid login credentials")) {
+        setError("Email ou mot de passe incorrect.");
+      } else if (msg.includes("Email not confirmed")) {
+        setError("Confirmez d'abord votre email (vérifiez votre boîte mail).");
+      } else if (msg.includes("User already registered")) {
+        setError("Un compte existe déjà avec cet email. Connectez-vous.");
+      } else if (msg.includes("Password should be at least")) {
+        setError("Le mot de passe doit faire au moins 6 caractères.");
+      } else if (msg.includes("Unable to validate email")) {
+        setError("Adresse email invalide.");
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
