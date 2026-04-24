@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
 :root {
   --forest-50: #f2f5f1;
@@ -52,18 +52,16 @@
    DESIGN SYSTEM CLASSES
    ===================== */
 
-/* Backgrounds */
 .bg-forest-800 { background-color: var(--forest-800) !important; }
 .bg-forest-700 { background-color: var(--forest-700) !important; }
-.bg-forest-500 { background-color: var(--forest-500) !important; }
 .bg-forest-600 { background-color: var(--forest-600) !important; }
+.bg-forest-500 { background-color: var(--forest-500) !important; }
 .bg-beige-100 { background-color: var(--beige-100) !important; }
 .bg-beige-200 { background-color: var(--beige-200) !important; }
 .bg-beige-300 { background-color: var(--beige-300) !important; }
 .bg-copper-500 { background-color: var(--copper-500) !important; }
 .bg-copper-600 { background-color: var(--copper-600) !important; }
 
-/* Text colors */
 .text-forest-800 { color: var(--forest-800) !important; }
 .text-forest-700 { color: var(--forest-700) !important; }
 .text-forest-600 { color: var(--forest-600) !important; }
@@ -78,25 +76,25 @@
 .text-copper-400 { color: var(--copper-400) !important; }
 .text-copper-700 { color: var(--copper-600) !important; }
 
-/* Borders */
 .border-beige-300 { border-color: var(--beige-300) !important; }
 .border-beige-400 { border-color: var(--beige-400) !important; }
 .border-forest-500 { border-color: var(--forest-500) !important; }
 .border-forest-400 { border-color: var(--forest-400) !important; }
 .border-forest-300 { border-color: var(--forest-300) !important; }
+.border-forest-700 { border-color: var(--forest-700) !important; }
+.border-forest-800 { border-color: var(--forest-800) !important; }
 .border-copper-500 { border-color: var(--copper-500) !important; }
 
-/* Hover states */
 .hover\:bg-forest-600:hover { background-color: var(--forest-600) !important; }
 .hover\:bg-forest-700:hover { background-color: var(--forest-700) !important; }
 .hover\:bg-beige-100:hover { background-color: var(--beige-100) !important; }
+.hover\:bg-beige-200:hover { background-color: var(--beige-200) !important; }
 .hover\:text-forest-800:hover { color: var(--forest-800) !important; }
 .hover\:text-forest-700:hover { color: var(--forest-700) !important; }
 .hover\:text-beige-100:hover { color: var(--beige-100) !important; }
 .hover\:border-forest-600:hover { border-color: var(--forest-600) !important; }
 .hover\:border-forest-300:hover { border-color: var(--forest-300) !important; }
 
-/* Opacity variants */
 .bg-forest-500\/8 { background-color: rgba(74, 93, 67, 0.08) !important; }
 .bg-forest-500\/10 { background-color: rgba(74, 93, 67, 0.10) !important; }
 .bg-forest-500\/15 { background-color: rgba(74, 93, 67, 0.15) !important; }
@@ -107,32 +105,25 @@
 .border-forest-500\/15 { border-color: rgba(74, 93, 67, 0.15) !important; }
 .border-forest-500\/20 { border-color: rgba(74, 93, 67, 0.20) !important; }
 .border-forest-500\/30 { border-color: rgba(74, 93, 67, 0.30) !important; }
-.border-forest-700 { border-color: var(--forest-700) !important; }
-.border-forest-800 { border-color: var(--forest-800) !important; }
 .border-copper-500\/30 { border-color: rgba(184, 115, 51, 0.30) !important; }
 .border-copper-500\/20 { border-color: rgba(184, 115, 51, 0.20) !important; }
 .border-sage-400\/30 { border-color: rgba(185, 196, 173, 0.30) !important; }
 .border-beige-400\/20 { border-color: rgba(229, 217, 200, 0.20) !important; }
 
-/* Shadows */
 .shadow-forest { box-shadow: 0 4px 24px rgba(74, 93, 67, 0.15) !important; }
 .shadow-forest-lg { box-shadow: 0 8px 48px rgba(74, 93, 67, 0.2) !important; }
 .shadow-beige { box-shadow: 0 4px 24px rgba(74, 93, 67, 0.08) !important; }
 .hover\:shadow-forest:hover { box-shadow: 0 4px 24px rgba(74, 93, 67, 0.15) !important; }
 
-/* Rounded */
 .rounded-4xl { border-radius: 2rem !important; }
 .rounded-5xl { border-radius: 2.5rem !important; }
 
-/* Font */
 .font-display { font-family: 'Playfair Display', Georgia, serif !important; }
 
-/* Texture */
 .bg-texture {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a5d43' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Animations */
 .animate-breathe {
   animation: breathe 4s ease-in-out infinite;
 }
@@ -145,5 +136,4 @@
   50% { transform: scale(1.12); opacity: 1; }
 }
 
-/* Text balance */
 .text-balance { text-wrap: balance; }
