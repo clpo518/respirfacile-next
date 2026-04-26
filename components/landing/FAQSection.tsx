@@ -3,32 +3,32 @@ import { useState } from "react"
 
 const FAQS = [
   {
-    q: "Respirfacile remplace-t-il mon orthophoniste ?",
-    a: "Non. Respirfacile est un outil de pratique quotidienne, prescrit par votre professionnel de sante. Il complete le suivi en cabinet ; il ne le remplace pas.",
+    q: "C'est quoi exactement Respirfacile ?",
+    a: "Respirfacile est une application qui vous guide dans des exercices de respiration quotidiens pour réduire les ronflements et les apnées du sommeil. Pensez-y comme un coach respiratoire dans votre poche — vous suivez les instructions, l'application enregistre vos progrès, votre praticien suit votre évolution.",
   },
   {
-    q: "Est-ce que ca fonctionne vraiment pour le SAOS ?",
-    a: "Les etudes le confirment : une reeducation myofonctionnelle rigoureuse reduit l'IAH de 50% en moyenne (Guimaraes et al., CHEST 2009). Respirfacile structure precisement cette pratique quotidienne.",
+    q: "Est-ce que ça fonctionne vraiment ?",
+    a: "Oui. Des études cliniques montrent qu'une rééducation régulière de la respiration réduit les apnées du sommeil de 50% en moyenne pour les formes légères à modérées. Respirfacile est conçu pour vous aider à être régulier — c'est la clé des résultats.",
   },
   {
-    q: "Combien de temps par jour faut-il pratiquer ?",
-    a: "15 a 20 minutes par jour suffisent. Au-dela, les effets s'inversent. L'app vous stoppe automatiquement a 20 min.",
+    q: "Combien de temps faut-il y passer chaque jour ?",
+    a: "15 à 20 minutes par jour suffisent. Pas plus. Au-delà, les bénéfices ne s'accumulent pas. L'application vous guide et s'arrête automatiquement au bon moment.",
   },
   {
-    q: "Le patient doit-il payer quelque chose ?",
-    a: "Non. Jamais. Vos patients accedent gratuitement via le code PRO. Seul le professionnel paie l'abonnement mensuel.",
+    q: "Est-ce que je dois payer quelque chose ?",
+    a: "Non. Si votre orthophoniste ou kinésithérapeute vous donne un code d'accès, vous accédez gratuitement à l'application. C'est votre praticien qui règle l'abonnement.",
   },
   {
-    q: "Mes donnees patient sont-elles securisees ?",
-    a: "Oui. Hebergement en Europe, chiffrement en transit et au repos, acces par role strict. Conformite RGPD.",
+    q: "Mes données sont-elles confidentielles ?",
+    a: "Oui. Vos données sont hébergées en Europe, chiffrées et accessibles uniquement par vous et votre praticien. Conformité totale avec le RGPD.",
   },
   {
-    q: "Puis-je resilier a tout moment ?",
-    a: "Oui, sans penalite. Vos donnees sont conservees 60 jours apres resiliation. Aucun engagement minimum.",
+    q: "Je peux arrêter quand je veux ?",
+    a: "Bien sûr. Aucun engagement. Et si votre praticien arrête son abonnement, vos données restent accessibles 60 jours.",
   },
   {
-    q: "Quels profils de patients sont concernes ?",
-    a: "SAOS leger a modere, TMOF adulte, combinaisons SAOS + TMOF. Protocoles bases sur Guimaraes 2009, Camacho 2015, Puhan 2006 et De Felicio 2018.",
+    q: "Pour qui est-ce fait ?",
+    a: "Pour toute personne qui ronfle, qui se réveille fatiguée, qui respire par la bouche, ou qui suit un traitement pour les apnées du sommeil. Si un médecin ou spécialiste vous a conseillé des exercices de respiration, Respirfacile est fait pour vous.",
   },
 ]
 
@@ -45,7 +45,7 @@ export function FAQSection() {
             Tout ce que vous voulez savoir
           </h2>
           <p className="text-forest-500 max-w-xl mx-auto">
-            Des questions ? C&apos;est normal. Voila les reponses directes.
+            Des questions ? Normal. Voici les réponses directes.
           </p>
         </div>
         <div className="space-y-3">
@@ -87,7 +87,7 @@ export function FAQSection() {
           <p className="text-sm text-forest-500">
             Une autre question ?{" "}
             <a href="mailto:contact@respirfacile.fr" className="text-forest-700 font-semibold hover:underline underline-offset-2">
-              Ecrivez-nous
+              Écrivez-nous
             </a>
           </p>
         </div>

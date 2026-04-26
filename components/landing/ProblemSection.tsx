@@ -4,31 +4,31 @@ export function ProblemSection() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-forest-400 mb-3">Le vrai problème</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Ce que vous connaissez bien.</h2>
-          <p className="text-xl text-forest-400 max-w-xl mx-auto font-light">Entre les séances, vos patients livrent à eux-mêmes. Sans structure, les résultats ne viennent pas.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Vous connaissez cette situation.</h2>
+          <p className="text-xl text-forest-400 max-w-xl mx-auto font-light">Les exercices prescrits par votre praticien ne servent à rien si vous ne les faites pas régulièrement.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-5 mb-12">
           {[
             {
-              emoji: "😤",
-              title: "Entre les séances, rien",
-              desc: "Vos patients oublient. Pas de rappel, pas de structure, pas de suivi. L'observance réelle tourne autour de 30%.",
+              emoji: "😴",
+              title: "Vous ronflez, vous vous réveillez épuisé",
+              desc: "Malgré une nuit complète, vous êtes fatigué. Votre entourage se plaint. Vous savez que quelque chose ne va pas.",
             },
             {
-              emoji: "📭",
-              title: "Vous travaillez à l'aveugle",
-              desc: "Vous ne savez pas si le patient a eu du mal cette semaine, s'il a arrêté, ou pourquoi. Vous l'apprenez à la prochaine séance.",
+              emoji: "😕",
+              title: "On vous a dit de faire des exercices... mais lesquels ?",
+              desc: "Votre médecin ou orthophoniste vous a donné des conseils, mais sans suivi quotidien, c'est difficile de s'y tenir.",
             },
             {
-              emoji: "📝",
-              title: "Comptes-rendus chronophages",
-              desc: "Rédiger un bilan de rééducation prend du temps précieux entre deux patients. Et le médecin du sommeil l'attend.",
+              emoji: "🤷",
+              title: "Vous ne savez pas si ça avance",
+              desc: "Pas de retour, pas de progression visible. Difficile de rester motivé quand on ne voit pas les résultats.",
             },
             {
-              emoji: "📉",
-              title: "Résultats insuffisants",
-              desc: "La littérature est claire : sans pratique quotidienne structurée, les bénéfices chutent de 60%. Le protocole OMT demande de la régularité.",
+              emoji: "⏰",
+              title: "Pas le temps, pas la régularité",
+              desc: "La vie quotidienne reprend le dessus. Les exercices passent à la trappe. Et les problèmes restent.",
             },
           ].map((item) => (
             <div key={item.title} className="bg-beige-100/5 border border-white/10 rounded-3xl p-7 hover:bg-beige-100/8 transition-colors">
@@ -40,9 +40,9 @@ export function ProblemSection() {
         </div>
 
         <div className="rounded-3xl p-8 md:p-10 text-center border border-[#2D5016]/40" style={{background: "linear-gradient(135deg, #2D5016 0%, #1e3a0f 100%)"}}>
-          <p className="text-2xl font-bold mb-3">Respirfacile résout exactement ça.</p>
+          <p className="text-2xl font-bold mb-3">Respirfacile change ça.</p>
           <p className="text-white/75 text-lg max-w-2xl mx-auto leading-relaxed">
-            Pratique guidée quotidienne · Suivi automatique · Bilan en un clic · <strong className="text-white">Résultats mesurables dès 8 semaines</strong>
+            Des exercices guidés chaque jour · Votre progression en temps réel · <strong className="text-white">Des résultats visibles en 8 semaines</strong>
           </p>
         </div>
       </div>

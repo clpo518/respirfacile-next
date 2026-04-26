@@ -35,19 +35,16 @@ export function AuthForm() {
       if (mode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        // La redirection se fait côté serveur via middleware/dashboard
         router.push('/dashboard');
         router.refresh();
       } else {
-        // Signup — vérifications
         if (!fullName.trim()) {
-          throw new Error('Veuillez saisir votre nom complet.');
+          throw new Error('Veuillez saisir votre prenom et nom.');
         }
         if (role === 'patient' && !proCode.trim()) {
-          throw new Error('Le code PRO de votre orthophoniste est requis.');
+          throw new Error('Vous avez besoin du code donne par votre praticien pour vous inscrire.');
         }
 
-        // Vérifier le code Pro si patient
         let therapistId: string | null = null;
         if (role === 'patient' && proCode.trim()) {
           const { data: therapist } = await supabase
@@ -57,7 +54,7 @@ export function AuthForm() {
             .single();
 
           if (!therapist) {
-            throw new Error('Code PRO invalide. Vérifiez avec votre orthophoniste.');
+            throw new Error('Ce code ne correspond a aucun praticien. Verifiez avec votre orthophoniste ou kine.');
           }
           therapistId = therapist.id;
         }
@@ -75,7 +72,6 @@ export function AuthForm() {
         if (signUpError) throw signUpError;
 
         if (authData.user) {
-          // Créer le profil
           const profileData: Record<string, unknown> = {
             id: authData.user.id,
             email,
@@ -84,7 +80,6 @@ export function AuthForm() {
           };
 
           if (role === 'therapist') {
-            // Générer un code PRO unique
             const code = 'PRO-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             profileData.therapist_code = code;
             profileData.subscription_status = 'trialing';
@@ -93,7 +88,6 @@ export function AuthForm() {
 
           await supabase.from('profiles').upsert(profileData);
 
-          // Lier patient à son ortho
           if (role === 'patient' && therapistId) {
             await supabase.from('therapist_patients').insert({
               therapist_id: therapistId,
@@ -112,13 +106,12 @@ export function AuthForm() {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Une erreur est survenue';
-      // Traduire les erreurs Supabase communes
       if (msg.includes('Invalid login credentials')) {
         setError('Email ou mot de passe incorrect.');
       } else if (msg.includes('Email already registered') || msg.includes('already been registered')) {
-        setError('Cet email est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.');
+        setError('Cet email est deja utilise. Connectez-vous ou reinitailisez votre mot de passe.');
       } else if (msg.includes('Password should be')) {
-        setError('Le mot de passe doit faire au moins 6 caractères.');
+        setError('Le mot de passe doit faire au moins 6 caracteres.');
       } else {
         setError(msg);
       }
@@ -129,7 +122,6 @@ export function AuthForm() {
 
   return (
     <div className="w-full">
-      {/* Card */}
       <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-sm p-8 md:p-10">
         {/* Toggle login/signup */}
         <div className="flex bg-beige-200 rounded-2xl p-1 mb-8">
@@ -151,47 +143,52 @@ export function AuthForm() {
                 : 'text-forest-500 hover:text-forest-700'
             }`}
           >
-            Créer un compte
+            Creer un compte
           </button>
         </div>
 
         {/* Title */}
         <div className="mb-6">
           <h1 className="font-display text-2xl font-bold text-forest-800 mb-1">
-            {mode === 'login' ? 'Bon retour 👋' : 'Créer votre compte'}
+            {mode === 'login' ? 'Bon retour !' : 'Creer votre compte'}
           </h1>
           <p className="text-sm text-forest-500">
             {mode === 'login'
-              ? 'Connectez-vous à votre espace Respirfacile.'
-              : 'Rejoignez 85 professionnels et leurs patients.'}
+              ? 'Connectez-vous a votre espace Respirfacile.'
+              : 'Choisissez votre situation pour commencer.'}
           </p>
         </div>
 
         {/* Role selector (signup only) */}
         {mode === 'signup' && (
-          <div className="flex gap-3 mb-6">
-            <button
-              onClick={() => setRole('therapist')}
-              className={`flex-1 p-3 rounded-2xl border-2 text-sm font-semibold transition-all text-left ${
-                role === 'therapist'
-                  ? 'border-forest-500 bg-forest-500/5 text-forest-800'
-                  : 'border-beige-300 text-forest-500 hover:border-forest-300'
-              }`}
-            >
-              <div className="text-lg mb-1">🩺</div>
-              Orthophoniste / Kiné
-            </button>
-            <button
-              onClick={() => setRole('patient')}
-              className={`flex-1 p-3 rounded-2xl border-2 text-sm font-semibold transition-all text-left ${
-                role === 'patient'
-                  ? 'border-copper-500 bg-copper-500/5 text-forest-800'
-                  : 'border-beige-300 text-forest-500 hover:border-forest-300'
-              }`}
-            >
-              <div className="text-lg mb-1">🫁</div>
-              Patient
-            </button>
+          <div className="mb-6">
+            <p className="text-sm font-semibold text-forest-700 mb-3">Qui etes-vous ?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setRole('patient')}
+                className={`flex-1 p-4 rounded-2xl border-2 text-sm transition-all text-left ${
+                  role === 'patient'
+                    ? 'border-forest-500 bg-forest-500/5 text-forest-800'
+                    : 'border-beige-300 text-forest-500 hover:border-forest-300'
+                }`}
+              >
+                <div className="text-2xl mb-2">🫁</div>
+                <p className="font-bold text-forest-800 mb-0.5">Je suis patient</p>
+                <p className="text-xs text-forest-500 leading-snug">Mon praticien m&apos;a donne un code d&apos;acces</p>
+              </button>
+              <button
+                onClick={() => setRole('therapist')}
+                className={`flex-1 p-4 rounded-2xl border-2 text-sm transition-all text-left ${
+                  role === 'therapist'
+                    ? 'border-copper-500 bg-copper-500/5 text-forest-800'
+                    : 'border-beige-300 text-forest-500 hover:border-forest-300'
+                }`}
+              >
+                <div className="text-2xl mb-2">🩺</div>
+                <p className="font-bold text-forest-800 mb-0.5">Je suis praticien</p>
+                <p className="text-xs text-forest-500 leading-snug">Orthophoniste ou kinesitherapeute</p>
+              </button>
+            </div>
           </div>
         )}
 
@@ -208,18 +205,17 @@ export function AuthForm() {
         )}
 
         <form onSubmit={handleAuth} className="space-y-4">
-          {/* Full name (signup only) */}
           {mode === 'signup' && (
             <div>
               <label className="block text-sm font-semibold text-forest-700 mb-1.5">
-                Nom complet
+                Votre prenom et nom
               </label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                placeholder={role === 'therapist' ? 'Dr. Marie Dupont' : 'Jean Martin'}
+                placeholder={role === 'therapist' ? 'Dr. Marie Dupont' : 'Marie Martin'}
                 className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500 text-forest-800 placeholder-forest-400 transition-colors"
               />
             </div>
@@ -246,7 +242,7 @@ export function AuthForm() {
               </label>
               {mode === 'login' && (
                 <Link href="/reset-password" className="text-xs text-forest-500 hover:text-forest-700 transition-colors">
-                  Mot de passe oublié ?
+                  Mot de passe oublie ?
                 </Link>
               )}
             </div>
@@ -256,16 +252,16 @@ export function AuthForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              placeholder="••••••••"
+              placeholder="Au moins 6 caracteres"
               className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500 text-forest-800 placeholder-forest-400 transition-colors"
             />
           </div>
 
-          {/* Code Pro (patient signup only) */}
+          {/* Code acces (patient only) */}
           {mode === 'signup' && role === 'patient' && (
             <div>
               <label className="block text-sm font-semibold text-forest-700 mb-1.5">
-                Code PRO de votre orthophoniste
+                Code d&apos;acces de votre praticien
               </label>
               <input
                 type="text"
@@ -274,18 +270,25 @@ export function AuthForm() {
                 required
                 placeholder="PRO-XXXXXX"
                 maxLength={10}
-                className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white focus:outline-none focus:ring-2 focus:ring-copper-500/40 focus:border-copper-500 text-forest-800 placeholder-forest-400 font-mono uppercase transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500 text-forest-800 placeholder-forest-400 font-mono uppercase transition-colors"
               />
               <p className="text-xs text-forest-400 mt-1.5">
-                Demandez ce code à votre orthophoniste ou kinésithérapeute.
+                Votre orthophoniste ou kine vous a envoye ce code par email ou SMS.
               </p>
+            </div>
+          )}
+
+          {/* Patient sans code */}
+          {mode === 'signup' && role === 'patient' && (
+            <div className="bg-beige-200 border border-beige-300 rounded-2xl px-4 py-3 text-xs text-forest-600">
+              Pas de code ? Demandez a votre orthophoniste ou kinesitherapeute de vous en envoyer un. C&apos;est lui qui gere votre acces.
             </div>
           )}
 
           {/* Therapist trial info */}
           {mode === 'signup' && role === 'therapist' && (
             <div className="bg-forest-500/5 border border-forest-500/20 rounded-2xl px-4 py-3 text-xs text-forest-600">
-              ✓ 30 jours gratuits, sans carte bancaire · Annulable à tout moment
+              30 jours gratuits sans carte bancaire. Vous pourrez inviter vos patients des votre premiere connexion.
             </div>
           )}
 
@@ -306,7 +309,7 @@ export function AuthForm() {
             ) : mode === 'login' ? (
               'Se connecter'
             ) : role === 'therapist' ? (
-              'Créer mon espace pro gratuit'
+              'Creer mon espace gratuitement'
             ) : (
               'Rejoindre mon programme'
             )}
@@ -317,11 +320,11 @@ export function AuthForm() {
           {mode === 'login' ? (
             <>Pas encore de compte ?{' '}
               <button onClick={() => setMode('signup')} className="text-forest-600 font-semibold hover:underline">
-                Créer un compte
+                Creer un compte
               </button>
             </>
           ) : (
-            <>Déjà un compte ?{' '}
+            <>Deja un compte ?{' '}
               <button onClick={() => setMode('login')} className="text-forest-600 font-semibold hover:underline">
                 Se connecter
               </button>

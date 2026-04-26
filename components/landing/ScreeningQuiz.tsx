@@ -3,49 +3,49 @@
 import { useState } from "react"
 import Link from "next/link"
 
-type Profile = "saos" | "tmof" | "both" | "unrelated" | null
+type Profile = "apnees" | "respiration" | "both" | "unrelated" | null
 
 const QUESTIONS = [
-  { id: "snoring",    text: "Votre entourage vous signale que vous ronflez fort la nuit ?" },
-  { id: "tired",      text: "Vous vous réveillez fatigué(e) même après une nuit complète ?" },
-  { id: "mouth",      text: "Vous respirez majoritairement par la bouche (de jour ou de nuit) ?" },
-  { id: "jaw",        text: "Vous avez des douleurs à la mâchoire, des serrements de dents ?" },
-  { id: "children",   text: "Un professionnel a évoqué la rééducation oro-faciale ?" },
+  { id: "snoring",  text: "Votre entourage vous dit que vous ronflez fort la nuit ?" },
+  { id: "tired",    text: "Vous vous reveillez fatigue(e) meme apres une nuit entiere ?" },
+  { id: "mouth",    text: "Vous respirez surtout par la bouche (le jour ou la nuit) ?" },
+  { id: "jaw",      text: "Vous avez des douleurs a la machoire ou vous serrez les dents ?" },
+  { id: "pro",      text: "Un medecin ou specialiste vous a parle d'exercices de respiration ?" },
 ]
 
-const RESULTS: Record<NonNullable<Profile>, { title: string; desc: string; cta: string; href: string }> = {
-  saos: {
-    title: "Profil SAOS — Respirfacile est fait pour vous",
-    desc: "Vos réponses indiquent des signes caractéristiques du SAOS. Une rééducation respiratoire guidée peut réduire l'IAH de 50% sur les formes légères à modérées.",
-    cta: "Commencer mon programme",
-    href: "/auth?mode=signup",
+const RESULTS: Record<NonNullable<Profile>, { title: string; desc: string; ctaPro: string; ctaPatient: string }> = {
+  apnees: {
+    title: "Vous pourriez beneficier d'une reeducation respiratoire",
+    desc: "Vos reponses indiquent des signes d'apnees du sommeil. Un orthophoniste ou un kinesitherapeute peut vous prescrire un programme d'exercices guide. Parlez-en a votre medecin.",
+    ctaPro: "Je suis praticien — essayer Respirfacile",
+    ctaPatient: "Mon praticien m'a deja donne un code",
   },
-  tmof: {
-    title: "Profil TMOF — Thérapie myofonctionnelle",
-    desc: "Vos réponses pointent vers une dysfonction oro-faciale. Les exercices myofonctionnels de Respirfacile correspondent exactement à ce besoin.",
-    cta: "Voir les exercices",
-    href: "/auth?mode=signup",
+  respiration: {
+    title: "Des exercices de respiration pourraient vous aider",
+    desc: "Vos reponses indiquent une respiration buccale ou une mauvaise posture. Un specialiste peut vous guider avec des exercices quotidiens simples.",
+    ctaPro: "Je suis praticien — essayer Respirfacile",
+    ctaPatient: "Mon praticien m'a deja donne un code",
   },
   both: {
-    title: "Profil mixte SAOS + TMOF",
-    desc: "Vous présentez des signes des deux pathologies. C'est le cas le plus fréquent. Le programme complet de Respirfacile couvre les deux.",
-    cta: "Démarrer — 30j gratuits",
-    href: "/auth?mode=signup",
+    title: "Vous combinez plusieurs symptomes courants",
+    desc: "Ronflements, fatigue, respiration buccale — c'est frequent et tout a fait traitable. Parlez-en a votre medecin ou consultez un orthophoniste.",
+    ctaPro: "Je suis praticien — essayer Respirfacile",
+    ctaPatient: "Mon praticien m'a deja donne un code",
   },
   unrelated: {
-    title: "Respirfacile est peut-être moins adapté",
-    desc: "Vos réponses n'indiquent pas clairement de SAOS ou TMOF. Consultez un professionnel de santé pour un bilan personnalisé.",
-    cta: "En savoir plus quand même",
-    href: "/pricing",
+    title: "Respirfacile est peut-etre moins adapte",
+    desc: "Vos reponses n'indiquent pas clairement de probleme respiratoire. Consultez un medecin pour un bilan. Si un specialiste vous prescrit des exercices, revenez nous voir.",
+    ctaPro: "Je suis praticien — en savoir plus",
+    ctaPatient: "J'ai quand meme un code praticien",
   },
 }
 
 function computeProfile(answers: Record<string, boolean>): NonNullable<Profile> {
-  const saosScore = (answers.snoring ? 1 : 0) + (answers.tired ? 1 : 0)
-  const tmofScore = (answers.mouth ? 1 : 0) + (answers.jaw ? 1 : 0) + (answers.children ? 1 : 0)
-  if (saosScore >= 1 && tmofScore >= 1) return "both"
-  if (saosScore >= 1) return "saos"
-  if (tmofScore >= 1) return "tmof"
+  const apneesScore = (answers.snoring ? 1 : 0) + (answers.tired ? 1 : 0)
+  const respirationScore = (answers.mouth ? 1 : 0) + (answers.jaw ? 1 : 0) + (answers.pro ? 1 : 0)
+  if (apneesScore >= 1 && respirationScore >= 1) return "both"
+  if (apneesScore >= 1) return "apnees"
+  if (respirationScore >= 1) return "respiration"
   return "unrelated"
 }
 
@@ -82,18 +82,26 @@ export function ScreeningQuiz() {
       <div className="w-full max-w-xl mx-auto">
         <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-sm overflow-hidden">
           <div className="bg-[#2D5016] p-6 text-center">
-            <div className="text-4xl mb-2">🎯</div>
+            <div className="text-4xl mb-2">💡</div>
             <h3 className="text-xl font-bold text-white">{result.title}</h3>
           </div>
           <div className="p-8 text-center">
             <p className="text-forest-600 leading-relaxed mb-8">{result.desc}</p>
-            <Link
-              href={result.href}
-              className="block w-full bg-[#2D5016] hover:bg-[#1e3a0f] text-white font-semibold py-4 rounded-2xl transition-colors mb-4"
-            >
-              {result.cta} →
-            </Link>
-            <button onClick={reset} className="text-sm text-forest-400 hover:text-forest-600 transition-colors">
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/auth?mode=signup&role=therapist"
+                className="block w-full bg-[#2D5016] hover:bg-[#1e3a0f] text-white font-semibold py-4 rounded-2xl transition-colors"
+              >
+                {result.ctaPro} →
+              </Link>
+              <Link
+                href="/auth?mode=signup&role=patient"
+                className="block w-full bg-beige-200 hover:bg-beige-300 text-forest-700 font-semibold py-4 rounded-2xl transition-colors text-sm"
+              >
+                {result.ctaPatient}
+              </Link>
+            </div>
+            <button onClick={reset} className="text-xs text-forest-400 hover:text-forest-600 transition-colors mt-4 block mx-auto">
               Recommencer le test
             </button>
           </div>
@@ -105,7 +113,6 @@ export function ScreeningQuiz() {
   return (
     <div className="w-full max-w-xl mx-auto">
       <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-sm overflow-hidden">
-        {/* Progress */}
         <div className="h-1.5 bg-beige-200">
           <div
             className="h-full bg-[#2D5016] transition-all duration-500"

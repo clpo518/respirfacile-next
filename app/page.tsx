@@ -22,15 +22,13 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 rounded-full bg-forest-500/10 border border-forest-500/20 px-4 py-2 text-sm font-medium text-forest-700 mb-5">
-                60 secondes
+                1 minute
               </div>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-forest-800 mb-4 text-balance">
-                Etes-vous concerne par le SAOS
-                <br />
-                ou la reeducation respiratoire&nbsp;?
+                Respirfacile est-il fait pour vous ?
               </h2>
               <p className="text-forest-500 max-w-xl mx-auto">
-                6 questions pour savoir si Respirfacile est fait pour vous — ou pour vos patients.
+                5 questions pour le savoir.
               </p>
             </div>
             <ScreeningQuiz />
@@ -46,16 +44,15 @@ export default function HomePage() {
                   Application
                 </div>
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-beige-100 mb-5 leading-tight">
-                  Tout ce dont patient
-                  <br />
-                  et ortho ont besoin.
+                  Tout ce dont vous avez besoin,<br />
+                  en un seul endroit.
                 </h2>
                 <div className="space-y-4 mb-8">
                   {[
-                    { emoji: "🎯", title: "Seances guidees pas a pas", desc: "Timer integre, instructions claires, score enregistre automatiquement." },
-                    { emoji: "📈", title: "Progression visible", desc: "Graphiques, scores de pause, observance semaine par semaine." },
-                    { emoji: "📄", title: "Bilan PDF en 1 clic", desc: "L'ortho exporte un rapport complet pour le medecin du sommeil." },
-                    { emoji: "💬", title: "Message de l'ortho", desc: "L'ortho peut laisser des notes personnalisees visibles du patient." },
+                    { emoji: "🎯", title: "Exercices guides etape par etape", desc: "Un timer, des instructions claires, votre score enregistre automatiquement apres chaque seance." },
+                    { emoji: "📈", title: "Votre progression en un coup d'oeil", desc: "Graphiques, scores, seances realisees — vous voyez concretement ce qui s'ameliore." },
+                    { emoji: "📄", title: "Votre praticien suit votre evolution", desc: "Votre orthophoniste ou kine voit vos resultats en temps reel et ajuste votre programme." },
+                    { emoji: "💬", title: "Vos messages de suivi", desc: "Votre praticien vous laisse des encouragements et des conseils personnalises directement dans l'app." },
                   ].map((f) => (
                     <div key={f.title} className="flex gap-3">
                       <span className="text-xl flex-shrink-0 mt-0.5">{f.emoji}</span>
@@ -97,23 +94,23 @@ export default function HomePage() {
                 {
                   name: "Mathilde R.",
                   title: "Orthophoniste, Lyon",
-                  quote: "Mes patients font enfin leurs exercices entre les seances. Le score de pause est un vrai indicateur — ils sont fiers de voir leur progression. Resultats visibles des la semaine 3.",
+                  quote: "Mes patients font enfin leurs exercices entre les seances. Ils sont fiers de voir leur progression. Les resultats sont visibles des la troisieme semaine.",
                   stars: 5,
                   highlight: "Resultats des la semaine 3",
                 },
                 {
                   name: "Sophie B.",
                   title: "Orthophoniste, Paris 11e",
-                  quote: "Le bilan PDF que j'envoie au medecin du sommeil a change la donne. Les donnees objectivees convainquent la ou mes comptes-rendus ne suffisaient pas toujours.",
+                  quote: "Je peux maintenant envoyer un rapport complet au medecin du sommeil en un clic. Les donnees parlent d'elles-memes et ca change tout dans le suivi.",
                   stars: 5,
-                  highlight: "Bilans PDF pour le medecin",
+                  highlight: "Suivi medical facilite",
                 },
                 {
                   name: "Julien M.",
                   title: "Kinesitherapeute, Bordeaux",
-                  quote: "L'interface est propre et le patient comprend immediatement. Je configure un programme en 5 minutes. L'observance de mes patients SAOS a double en 2 mois.",
+                  quote: "L'application est intuitive, le patient comprend immediatement. Je configure un programme en 5 minutes. Mes patients sont deux fois plus reguliers qu'avant.",
                   stars: 5,
-                  highlight: "Observance x2 en 2 mois",
+                  highlight: "Regularite x2 en 2 mois",
                 },
               ].map((t) => (
                 <div
@@ -145,8 +142,8 @@ export default function HomePage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 {[
                   { value: "85", label: "Professionnels", sub: "orthophonistes et kines" },
-                  { value: "78%", label: "Observance moyenne", sub: "vs 30-40% sans outil" },
-                  { value: "-50%", label: "Reduction IAH", sub: "sur SAOS leger a modere" },
+                  { value: "78%", label: "Regularite moyenne", sub: "vs 30% sans application" },
+                  { value: "-50%", label: "Moins d'apnees", sub: "formes legeres a moderees" },
                   { value: "4,8", label: "Satisfaction /5", sub: "sur 120+ utilisateurs" },
                 ].map((s) => (
                   <div key={s.label}>

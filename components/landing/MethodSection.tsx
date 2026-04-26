@@ -3,22 +3,22 @@ export function MethodSection() {
     {
       num: "01",
       emoji: "📋",
-      title: "Vous prescrivez",
-      desc: "Vous créez le programme en 2 minutes selon le profil : SAOS léger, sévère sous CPAP, TMOF, ou mixte. Vous envoyez un code à votre patient.",
+      title: "Votre praticien vous prescrit un programme",
+      desc: "Votre orthophoniste ou kinésithérapeute configure votre programme personnalisé et vous envoie un code d'accès. C'est gratuit pour vous.",
       color: "#2D5016",
     },
     {
       num: "02",
       emoji: "🫁",
-      title: "Le patient pratique",
-      desc: "15–20 min/jour, guidé pas à pas. Timer intégré, instructions claires, score enregistré automatiquement. Zéro friction.",
+      title: "Vous pratiquez 15 min par jour",
+      desc: "L'application vous guide étape par étape. Un timer, des instructions claires, un retour immédiat. Vous savez exactement quoi faire et comment.",
       color: "#8B4513",
     },
     {
       num: "03",
       emoji: "📊",
-      title: "Vous suivez à distance",
-      desc: "Journal de bord hebdomadaire, alertes inactivité, graphiques de progression. Export PDF bilan en un clic pour le médecin du sommeil.",
+      title: "Vous voyez votre progression",
+      desc: "Chaque séance est enregistrée. Votre praticien suit votre évolution à distance et ajuste votre programme. Vous voyez vos progrès semaine après semaine.",
       color: "#2D5016",
     },
   ]
@@ -27,8 +27,8 @@ export function MethodSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-copper-500 mb-3">Comment ça marche</p>
-          <h2 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">Simple pour vous.<br/>Efficace pour eux.</h2>
-          <p className="text-xl text-forest-500 max-w-xl mx-auto font-light">Un workflow en 3 étapes, pensé pour s'intégrer dans votre pratique sans friction.</p>
+          <h2 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">Simple à utiliser.<br/>Efficace dès la première semaine.</h2>
+          <p className="text-xl text-forest-500 max-w-xl mx-auto font-light">Pas besoin de matériel, pas besoin d'expérience. Juste 15 minutes par jour.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 lg:gap-10">
@@ -48,14 +48,14 @@ export function MethodSection() {
 
         <div className="mt-14 bg-[#2D5016] rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-white font-bold text-xl mb-1">Résultats typiques en 8 semaines</p>
-            <p className="text-white/70 text-sm max-w-xl">Les études montrent −50% d&apos;IAH avec un protocole OMT rigoureux. Respirfacile structure cette pratique pour maximiser l&apos;observance.</p>
+            <p className="text-white font-bold text-xl mb-1">Des résultats concrets en 8 semaines</p>
+            <p className="text-white/70 text-sm max-w-xl">Des études scientifiques montrent qu&apos;une rééducation régulière de la respiration peut réduire les apnées de moitié. Respirfacile vous aide à rester régulier.</p>
           </div>
           <div className="flex gap-8 flex-shrink-0">
             {[
-              { val: "50%", lab: "réduction IAH" },
-              { val: "89%", lab: "observance" },
-              { val: "8 sem", lab: "premiers résultats" },
+              { val: "−50%", lab: "d'apnées en moyenne" },
+              { val: "89%", lab: "des patients restent réguliers" },
+              { val: "8 sem.", lab: "pour les premiers effets" },
             ].map((s) => (
               <div key={s.lab} className="text-center">
                 <p className="text-3xl font-bold text-white">{s.val}</p>
