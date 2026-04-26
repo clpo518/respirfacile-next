@@ -1,51 +1,59 @@
-import Link from "next/link";
+"use client"
+import Link from "next/link"
+import { useState } from "react"
 
 export function Navbar() {
+  const [open, setOpen] = useState(false)
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-beige-300 bg-beige-200/95 backdrop-blur supports-[backdrop-filter]:bg-beige-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-18 py-4 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-forest-500 flex items-center justify-center shadow-sm">
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-beige-100" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-                <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <span className="font-semibold text-xl text-forest-800 tracking-tight">
-              Respir<span className="text-copper-500">facile</span>
-            </span>
-          </Link>
+    <header className="sticky top-0 z-50 bg-beige-200/95 backdrop-blur-md border-b border-beige-300/80">
+      <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-[#2D5016] flex items-center justify-center shadow-sm">
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
+              <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <span className="font-semibold text-lg text-forest-800 tracking-tight">Respir<span className="text-copper-500">facile</span></span>
+        </Link>
 
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm font-medium text-forest-600 hover:text-forest-800 transition-colors">
-              Tarifs
-            </Link>
-            <Link href="/about" className="text-sm font-medium text-forest-600 hover:text-forest-800 transition-colors">
-              Notre approche
-            </Link>
-            <Link href="/auth?mode=login" className="text-sm font-medium text-forest-600 hover:text-forest-800 transition-colors">
-              Connexion
-            </Link>
-            <Link
-              href="/auth?mode=signup&role=therapist"
-              className="rounded-full bg-forest-500 px-5 py-2.5 text-sm font-semibold text-beige-100 hover:bg-forest-600 transition-colors shadow-sm"
-            >
-              Essai gratuit 30 jours
-            </Link>
-          </nav>
+        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-forest-600">
+          <Link href="/#methode" className="hover:text-forest-700 transition-colors">Méthode</Link>
+          <Link href="/#fonctionnalites" className="hover:text-forest-700 transition-colors">Fonctionnalités</Link>
+          <Link href="/#temoignages" className="hover:text-forest-700 transition-colors">Témoignages</Link>
+          <Link href="/pricing" className="hover:text-forest-700 transition-colors">Tarifs</Link>
+        </nav>
 
-          {/* Mobile CTA */}
-          <Link
-            href="/auth?mode=signup"
-            className="md:hidden rounded-full bg-forest-500 px-4 py-2 text-sm font-semibold text-beige-100"
-          >
-            Essai gratuit
+        <div className="hidden md:flex items-center gap-3">
+          <Link href="/auth" className="text-sm text-forest-600 hover:text-forest-700 transition-colors font-medium">Connexion</Link>
+          <Link href="/auth?mode=signup&role=therapist" className="bg-[#2D5016] text-white text-sm px-5 py-2 rounded-full font-semibold hover:bg-[#1e3a0f] transition-colors shadow-sm">
+            Essai gratuit →
           </Link>
         </div>
+
+        <button className="md:hidden p-1" onClick={() => setOpen(!open)} aria-label="Menu">
+          <svg className="w-6 h-6 text-forest-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            {open
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
+          </svg>
+        </button>
       </div>
+
+      {open && (
+        <div className="md:hidden bg-beige-100 border-t border-beige-300 px-4 py-5 space-y-1">
+          <Link href="/#methode" className="block text-forest-700 font-medium py-2.5 hover:text-forest-700" onClick={() => setOpen(false)}>Méthode</Link>
+          <Link href="/#fonctionnalites" className="block text-forest-700 font-medium py-2.5 hover:text-forest-700" onClick={() => setOpen(false)}>Fonctionnalités</Link>
+          <Link href="/#temoignages" className="block text-forest-700 font-medium py-2.5 hover:text-forest-700" onClick={() => setOpen(false)}>Témoignages</Link>
+          <Link href="/pricing" className="block text-forest-700 font-medium py-2.5 hover:text-forest-700" onClick={() => setOpen(false)}>Tarifs</Link>
+          <div className="pt-3 border-t border-beige-300 space-y-2">
+            <Link href="/auth" className="block text-forest-700 py-2.5 font-medium" onClick={() => setOpen(false)}>Connexion</Link>
+            <Link href="/auth?mode=signup&role=therapist" className="block bg-[#2D5016] text-white px-4 py-3 rounded-2xl text-center font-semibold shadow-sm" onClick={() => setOpen(false)}>
+              Essai gratuit 30 jours →
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
-  );
+  )
 }

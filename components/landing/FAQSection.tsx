@@ -1,62 +1,97 @@
-const faqs = [
+"use client"
+import { useState } from "react"
+
+const FAQS = [
   {
-    q: "Est-ce gratuit pour les patients ?",
-    a: "Oui, totalement. Le patient accède à l'application gratuitement via le code Pro de son orthophoniste. Seul l'orthophoniste paie un abonnement.",
+    q: "Respirfacile remplace-t-il mon orthophoniste ?",
+    a: "Non. Respirfacile est un outil de pratique quotidienne, prescrit par votre professionnel de sante. Il complete le suivi en cabinet ; il ne le remplace pas.",
   },
   {
-    q: "Respirfacile remplace-t-il le CPAP ?",
-    a: "Non. Respirfacile est un complément de traitement. Pour les SAOS sévères, le CPAP reste indispensable. La thérapie myofonctionnelle renforce les muscles des voies aériennes supérieures et améliore l'efficacité du traitement global.",
+    q: "Est-ce que ca fonctionne vraiment pour le SAOS ?",
+    a: "Les etudes le confirment : une reeducation myofonctionnelle rigoureuse reduit l'IAH de 50% en moyenne (Guimaraes et al., CHEST 2009). Respirfacile structure precisement cette pratique quotidienne.",
   },
   {
-    q: "Quelles études scientifiques valident l'approche ?",
-    a: "L'approche est basée sur 9 études cliniques, dont la méta-analyse de référence Camacho et al. 2015 (Stanford University, n=120). Elle démontre une réduction de l'IAH de 50% en moyenne après 8 semaines de thérapie myofonctionnelle.",
+    q: "Combien de temps par jour faut-il pratiquer ?",
+    a: "15 a 20 minutes par jour suffisent. Au-dela, les effets s'inversent. L'app vous stoppe automatiquement a 20 min.",
   },
   {
-    q: "Les données médicales sont-elles sécurisées ?",
-    a: "Toutes les données sont hébergées en France, conformes au RGPD. Chaque patient ne voit que ses propres données. Les orthophonistes voient uniquement les données de leurs patients.",
+    q: "Le patient doit-il payer quelque chose ?",
+    a: "Non. Jamais. Vos patients accedent gratuitement via le code PRO. Seul le professionnel paie l'abonnement mensuel.",
   },
   {
-    q: "Combien de temps par jour ?",
-    a: "15 à 20 minutes par jour maximum. Au-delà, c'est contre-productif. Les exercices sont conçus pour s'intégrer dans la routine quotidienne.",
+    q: "Mes donnees patient sont-elles securisees ?",
+    a: "Oui. Hebergement en Europe, chiffrement en transit et au repos, acces par role strict. Conformite RGPD.",
   },
   {
-    q: "Comment fonctionne l'essai gratuit ?",
-    a: "L'orthophoniste bénéficie de 30 jours d'essai complet sans carte bancaire. À la fin de l'essai, il peut choisir son plan (Starter 15€, Pro 25€, Cabinet 49€).",
+    q: "Puis-je resilier a tout moment ?",
+    a: "Oui, sans penalite. Vos donnees sont conservees 60 jours apres resiliation. Aucun engagement minimum.",
   },
-];
+  {
+    q: "Quels profils de patients sont concernes ?",
+    a: "SAOS leger a modere, TMOF adulte, combinaisons SAOS + TMOF. Protocoles bases sur Guimaraes 2009, Camacho 2015, Puhan 2006 et De Felicio 2018.",
+  },
+]
 
 export function FAQSection() {
+  const [open, setOpen] = useState<number | null>(null)
   return (
-    <section className="w-full py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-beige-300">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-beige-200" id="faq">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-14">
-          <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">FAQ</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-forest-800">
-            Questions fréquentes
+          <div className="inline-flex items-center gap-2 rounded-full bg-forest-500/10 border border-forest-500/20 px-4 py-2 text-sm font-medium text-forest-700 mb-5">
+            Questions
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-forest-800 mb-4 text-balance">
+            Tout ce que vous voulez savoir
           </h2>
+          <p className="text-forest-500 max-w-xl mx-auto">
+            Des questions ? C&apos;est normal. Voila les reponses directes.
+          </p>
         </div>
-
         <div className="space-y-3">
-          {faqs.map((faq, i) => (
+          {FAQS.map((faq, i) => (
             <div
-              key={faq.q}
-              className="rounded-3xl bg-beige-100 border border-beige-300 p-6 shadow-beige hover:shadow-forest transition-shadow duration-200"
+              key={i}
+              className={`rounded-2xl border overflow-hidden transition-all duration-200 ${
+                open === i
+                  ? "bg-beige-100 border-forest-300 shadow-sm"
+                  : "bg-beige-100/60 border-beige-300 hover:border-forest-200 hover:bg-beige-100"
+              }`}
             >
-              <div className="flex items-start gap-4">
-                <span className="text-xs font-bold text-copper-400 mt-1 flex-shrink-0 font-display">
-                  {String(i + 1).padStart(2, "0")}
+              <button
+                className="w-full px-6 py-5 text-left flex items-center justify-between gap-4"
+                onClick={() => setOpen(open === i ? null : i)}
+              >
+                <span className={`font-semibold text-sm md:text-base transition-colors ${open === i ? "text-forest-800" : "text-forest-700"}`}>
+                  {faq.q}
                 </span>
-                <div>
-                  <h3 className="text-base font-semibold text-forest-800 mb-2">
-                    {faq.q}
-                  </h3>
+                <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+                  open === i ? "bg-forest-500 rotate-45" : "bg-forest-500/10 border border-forest-500/20"
+                }`}>
+                  <svg className={`w-3.5 h-3.5 transition-colors ${open === i ? "text-beige-100" : "text-forest-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m-8-8h16" />
+                  </svg>
+                </div>
+              </button>
+              {open === i && (
+                <div className="px-6 pb-6">
+                  <div className="h-px bg-forest-500/10 mb-4" />
                   <p className="text-forest-600 leading-relaxed text-sm">{faq.a}</p>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
+
+        <div className="mt-10 text-center">
+          <p className="text-sm text-forest-500">
+            Une autre question ?{" "}
+            <a href="mailto:contact@respirfacile.fr" className="text-forest-700 font-semibold hover:underline underline-offset-2">
+              Ecrivez-nous
+            </a>
+          </p>
+        </div>
       </div>
     </section>
-  );
+  )
 }

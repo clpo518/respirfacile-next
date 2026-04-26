@@ -4,168 +4,352 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 
 export const metadata: Metadata = {
-  title: "Tarifs — Respirfacile",
-  description:
-    "Starter 15€/mois · Pro 30€/mois · Cabinet 55€/mois. 30 jours d'essai gratuit sans carte bancaire. Patients accèdent gratuitement.",
+  title: "Tarification — Respirfacile",
+  description: "Plans d'abonnement pour orthophonistes et kinésithérapeutes. 30 jours gratuits sans carte bancaire.",
 };
 
 const plans = [
   {
     name: "Starter",
     price: 15,
-    priceAnnual: 12,
-    patients: "5 patients",
-    description: "Pour démarrer la pratique OMT dans votre cabinet",
+    period: "/mois",
+    description: "Pour commencer",
+    highlighted: false,
     features: [
-      "5 patients actifs",
-      "Tous les exercices (15 exercices)",
-      "Suivi d'observance",
-      "Bilan PDF basique",
+      "Jusqu'à 5 patients",
+      "Tous les exercices",
+      "Bilans PDF",
+      "Historique 3 mois",
       "Support email",
     ],
-    cta: "Commencer l'essai",
-    highlighted: false,
+    cta: "Démarrer l'essai gratuit",
   },
   {
     name: "Pro",
     price: 30,
-    priceAnnual: 24,
-    patients: "20 patients",
-    description: "Pour les orthophonistes avec une patientèle SAOS active",
-    features: [
-      "20 patients actifs",
-      "Tous les exercices",
-      "Suivi d'observance en temps réel",
-      "Bilan PDF complet exportable",
-      "Graphiques de progression",
-      "Support prioritaire",
-    ],
-    cta: "Commencer l'essai",
+    period: "/mois",
+    description: "Recommandé",
     highlighted: true,
+    features: [
+      "Jusqu'à 20 patients",
+      "Tous les exercices",
+      "Bilans PDF avancés",
+      "Historique 12 mois",
+      "Support prioritaire",
+      "Codes Pro illimités",
+    ],
+    cta: "Démarrer l'essai gratuit",
   },
   {
     name: "Cabinet",
     price: 55,
-    priceAnnual: 44,
-    patients: "Illimité",
-    description: "Pour les cabinets multi-praticiens",
+    period: "/mois",
+    description: "Pour structures",
+    highlighted: false,
     features: [
       "Patients illimités",
-      "Plusieurs praticiens",
       "Tous les exercices",
-      "Bilan PDF complet",
-      "Intégration agenda (bientôt)",
+      "Bilans PDF complets",
+      "Historique illimité",
       "Support dédié",
+      "Accès administrateur",
+      "Rapports de cabinet",
     ],
-    cta: "Commencer l'essai",
-    highlighted: false,
+    cta: "Démarrer l'essai gratuit",
   },
 ];
 
-export default function PricingPage() {
+interface PricingPageProps {
+  searchParams: Promise<{ expired?: string }>;
+}
+
+export default async function PricingPage({ searchParams }: PricingPageProps) {
+  const params = await searchParams;
+  const isExpired = params.expired === "1";
+
   return (
     <div className="w-full">
       <Navbar />
       <main className="w-full">
-        {/* Hero pricing */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-beige-200 bg-texture">
-          <div className="max-w-7xl mx-auto text-center">
-            <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">Tarifs</p>
-            <h1 className="font-display text-5xl md:text-6xl font-bold text-forest-800 mb-6 text-balance">
-              Simple et transparent
-            </h1>
-            <p className="text-lg text-forest-600 mb-3 max-w-xl mx-auto">
-              30 jours d&apos;essai gratuit · Sans carte bancaire · Annulable à tout moment
+        {/* Expired Banner */}
+        {isExpired && (
+          <div className="bg-copper-500 text-white px-4 py-4 text-center">
+            <p className="font-semibold">
+              ⏰ Votre essai a expiré. Choisissez un plan pour continuer à accompagner vos patients.
             </p>
-            <p className="text-sm font-semibold text-forest-700 bg-forest-500/10 border border-forest-500/20 inline-block rounded-full px-4 py-1.5">
-              Les patients accèdent toujours gratuitement via votre code Pro
+          </div>
+        )}
+
+        {/* Hero */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-beige-200 bg-texture">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-copper-500 text-sm font-semibold uppercase tracking-widest mb-4">Tarification</p>
+            <h1 className="font-display text-5xl md:text-6xl font-bold text-forest-800 mb-6">
+              Des prix simples et justes
+            </h1>
+            <p className="text-xl text-forest-600 leading-relaxed max-w-2xl mx-auto">
+              30 jours gratuits, sans carte bancaire. Choisissez le plan qui correspond à vos besoins.
+            </p>
+          </div>
+        </section>
+
+        {/* Social Proof */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-beige-100 border-b border-beige-300">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-4 text-sm text-forest-700">
+              <div className="flex -space-x-2">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full bg-forest-500/20 border-2 border-beige-100 flex items-center justify-center text-xs font-bold text-forest-700"
+                  >
+                    {String.fromCharCode(65 + i)}
+                  </div>
+                ))}
+              </div>
+              <span className="font-semibold">85 orthophonistes nous font confiance</span>
+            </div>
+            <p className="text-xs text-forest-500 mt-3">
+              Vos patients accèdent complètement gratuitement via votre code Pro.
             </p>
           </div>
         </section>
 
         {/* Plans */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-300">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`rounded-4xl p-8 border-2 relative overflow-hidden transition-transform hover:-translate-y-1 duration-200 ${
-                  plan.highlighted
-                    ? "border-forest-500 bg-beige-100 shadow-forest-lg"
-                    : "border-beige-300 bg-beige-100 shadow-beige"
-                }`}
-              >
-                {/* Top accent bar */}
-                {plan.highlighted && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest-400 to-copper-400" />
-                )}
-
-                {plan.highlighted && (
-                  <div className="inline-block rounded-full bg-forest-500 px-4 py-1 text-xs font-semibold text-beige-100 mb-4">
-                    Le plus populaire
-                  </div>
-                )}
-
-                <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">
-                  {plan.name}
-                </h2>
-                <p className="text-forest-500 text-sm mb-6">{plan.description}</p>
-
-                <div className="mb-6">
-                  <span className="font-display text-5xl font-bold text-forest-800">
-                    {plan.price}€
-                  </span>
-                  <span className="text-forest-500 text-sm">/mois</span>
-                  <p className="text-xs text-copper-500 mt-1 font-medium">
-                    ou {plan.priceAnnual}€/mois en annuel
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-forest-500/8 border border-forest-500/15 px-4 py-2.5 text-center mb-6">
-                  <span className="font-semibold text-forest-700 text-sm">
-                    {plan.patients}
-                  </span>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-forest-700">
-                      <div className="w-4 h-4 rounded-full bg-forest-500/15 border border-forest-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg className="w-2.5 h-2.5 text-forest-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href={`/auth?mode=signup&role=therapist&plan=${plan.name.toLowerCase()}`}
-                  className={`block w-full text-center rounded-full py-3.5 text-sm font-semibold transition-colors ${
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-beige-300">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {plans.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={`rounded-3xl p-8 flex flex-col ${
                     plan.highlighted
-                      ? "bg-forest-500 text-beige-100 hover:bg-forest-600 shadow-forest"
-                      : "bg-forest-800 text-beige-200 hover:bg-forest-700"
+                      ? "bg-forest-800 text-beige-100 border-2 border-forest-600 shadow-lg ring-2 ring-forest-500/50"
+                      : "bg-beige-100 border border-beige-300 shadow-beige"
                   }`}
                 >
-                  {plan.cta}
-                </Link>
-                <p className="text-center text-xs text-forest-400 mt-3">
-                  30 jours gratuits · Sans CB
-                </p>
-              </div>
-            ))}
+                  {plan.highlighted && (
+                    <div className="mb-4 inline-block">
+                      <span className="inline-block bg-copper-500 text-beige-100 text-xs font-bold px-3 py-1 rounded-full">
+                        ⭐ Recommandé
+                      </span>
+                    </div>
+                  )}
+                  <div className="mb-6">
+                    <p className={`text-sm font-semibold uppercase tracking-widest mb-2 ${plan.highlighted ? "text-copper-400" : "text-copper-500"}`}>
+                      {plan.description}
+                    </p>
+                    <h3 className={`font-display text-2xl font-bold mb-2 ${plan.highlighted ? "text-beige-100" : "text-forest-800"}`}>
+                      {plan.name}
+                    </h3>
+                    <div className={`text-4xl font-bold ${plan.highlighted ? "text-copper-400" : "text-forest-800"}`}>
+                      {plan.price}€<span className={`text-lg ${plan.highlighted ? "text-beige-300" : "text-forest-600"}`}>{plan.period}</span>
+                    </div>
+                  </div>
+
+                  <p className={`text-sm mb-6 ${plan.highlighted ? "text-beige-200" : "text-forest-600"}`}>
+                    {plan.description === "Recommandé"
+                    ? "Choix populaire auprès des orthos actives"
+                    : plan.name === "Cabinet"
+                    ? "Idéal pour un cabinet multi-praticiens"
+                    : "Parfait pour démarrer"}
+                  </p>
+
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {plan.features.map((f, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <div className={`w-4 h-4 rounded-full ${plan.highlighted ? "bg-copper-400/15 border border-copper-400/30" : "bg-forest-500/15 border border-forest-500/30"} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                          <svg className={`w-2.5 h-2.5 ${plan.highlighted ? "text-copper-400" : "text-forest-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className={`text-sm ${plan.highlighted ? "text-beige-200" : "text-forest-700"}`}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    href={`/auth?mode=signup&role=therapist&plan=${plan.name.toLowerCase()}`}
+                    className={`block w-full text-center rounded-full py-3.5 text-sm font-semibold transition-colors ${
+                      plan.highlighted
+                        ? "bg-copper-500 text-beige-100 hover:bg-copper-600 shadow-copper"
+                        : "bg-forest-500 text-beige-100 hover:bg-forest-600"
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
+                  <p className={`text-center text-xs mt-3 ${plan.highlighted ? "text-beige-300" : "text-forest-400"}`}>
+                    30 jours gratuits · Sans CB
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Contact */}
+        {/* Comparison table */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-200">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="font-display text-3xl font-bold text-forest-800 text-center mb-10">
+              Comparaison détaillée
+            </h2>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-beige-400">
+                    <th className="text-left py-4 px-4 font-semibold text-forest-800">Fonctionnalité</th>
+                    <th className="text-center py-4 px-4 font-semibold text-forest-800">Starter</th>
+                    <th className="text-center py-4 px-4 font-semibold text-forest-800">Pro</th>
+                    <th className="text-center py-4 px-4 font-semibold text-forest-800">Cabinet</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-beige-400">
+                  <tr>
+                    <td className="py-3 px-4 font-medium text-forest-800">Patients maximum</td>
+                    <td className="text-center py-3 px-4 text-forest-700">5</td>
+                    <td className="text-center py-3 px-4 text-forest-700 font-bold">20</td>
+                    <td className="text-center py-3 px-4 text-forest-700">Illimité</td>
+                  </tr>
+                  <tr className="bg-beige-100/50">
+                    <td className="py-3 px-4 font-medium text-forest-800">Tous les exercices</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 font-medium text-forest-800">Bilan PDF</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                  </tr>
+                  <tr className="bg-beige-100/50">
+                    <td className="py-3 px-4 font-medium text-forest-800">Historique de progression</td>
+                    <td className="text-center py-3 px-4 text-sm">3 mois</td>
+                    <td className="text-center py-3 px-4 text-sm font-bold">12 mois</td>
+                    <td className="text-center py-3 px-4 text-sm">Illimité</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 font-medium text-forest-800">Support</td>
+                    <td className="text-center py-3 px-4 text-sm">Email</td>
+                    <td className="text-center py-3 px-4 text-sm font-bold">Prioritaire</td>
+                    <td className="text-center py-3 px-4 text-sm">Dédié</td>
+                  </tr>
+                  <tr className="bg-beige-100/50">
+                    <td className="py-3 px-4 font-medium text-forest-800">Codes Pro illimités</td>
+                    <td className="text-center py-3 px-4">-</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                    <td className="text-center py-3 px-4">✓</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-300">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="font-display text-3xl font-bold text-forest-800 text-center mb-10">
+              Questions fréquentes
+            </h2>
+
+            <div className="space-y-4">
+              {/* FAQ Item 1 */}
+              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
+                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
+                  Mes patients doivent-ils payer ?
+                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
+                  <p>
+                    <strong>Non. Jamais.</strong> Vos patients accèdent complètement gratuitement via votre code Pro. Vous seul payez l'abonnement mensuel pour le cabinet. Vos patients n'entrent pas de carte bancaire.
+                  </p>
+                </div>
+              </details>
+
+              {/* FAQ Item 2 */}
+              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
+                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
+                  Que se passe-t-il si j'arrête mon abonnement ?
+                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
+                  <p>
+                    Vous pouvez annuler à tout moment, sans pénalité. Vos données restent accessibles pendant 60 jours après résiliation. Aucun engagement minimum.
+                  </p>
+                </div>
+              </details>
+
+              {/* FAQ Item 3 */}
+              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
+                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
+                  Puis-je tester avant de payer ?
+                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
+                  <p>
+                    <strong>Oui, complètement.</strong> 30 jours gratuits complets, sans carte bancaire. Vous entrez votre carte bancaire seulement si vous continuez au-delà. Vous pouvez tester tous les plans.
+                  </p>
+                </div>
+              </details>
+
+              {/* FAQ Item 4 */}
+              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
+                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
+                  Y a-t-il un engagement minimum ?
+                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </summary>
+                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
+                  <p>
+                    Non. Mensuel, sans engagement. Vous pouvez arrêter ou changer de plan n'importe quand, à la fin du mois.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-forest-500 to-forest-600">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-beige-100 mb-4">
+              Prêt à commencer ?
+            </h2>
+            <p className="text-beige-200 mb-8 max-w-xl mx-auto">
+              30 jours gratuits. Aucune carte bancaire requise. Annulable à tout moment.
+            </p>
+            <Link
+              href="/auth?mode=signup&role=therapist"
+              className="inline-flex items-center justify-center rounded-full bg-copper-500 hover:bg-copper-600 px-8 py-4 text-beige-100 font-semibold transition-colors text-lg shadow-copper"
+            >
+              Commencer l'essai gratuit 30 jours
+              <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <p className="text-xs text-beige-300 mt-4">
+              Sans CB · Annulable · RGPD · France
+            </p>
+          </div>
+        </section>
+
+        {/* Contact fallback */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-beige-100">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="font-display text-2xl font-bold text-forest-800 mb-4">
-              Des questions sur les tarifs ?
+              Besoins spécifiques ?
             </h2>
             <p className="text-forest-600 mb-6 text-sm">
-              Grand cabinet, structure hospitalière ou besoins spécifiques ? Contactez-nous.
+              Grand cabinet, structure hospitalière, ou questions sur intégration spéciale ?
             </p>
             <Link
               href="/contact"
@@ -176,7 +360,6 @@ export default function PricingPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
-  );
+  )
 }

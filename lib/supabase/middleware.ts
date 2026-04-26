@@ -29,6 +29,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Routes protégées par authentification
   const protectedPaths = [
     "/dashboard",
     "/practice",
@@ -36,14 +37,26 @@ export async function updateSession(request: NextRequest) {
     "/therapist",
     "/patient",
     "/admin",
+    "/exercises",
+    "/session",
+    "/history",
   ];
   const isProtected = protectedPaths.some((p) =>
     request.nextUrl.pathname.startsWith(p)
   );
 
+  // Redirection vers login si pas d'utilisateur et route protégée
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth";
+    url.searchParams.set("next", request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Redirection vers dashboard si déjà connecté et sur auth
+  if (user && request.nextUrl.pathname === "/auth") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 

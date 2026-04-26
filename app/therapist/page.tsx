@@ -1,176 +1,296 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
+'use client';
 
-export default async function TherapistDashboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { TherapistNavbar } from '@/components/layout/TherapistNavbar';
+import DashboardStatCard from '@/components/therapist/DashboardStatCard';
+import AlertsSection from '@/components/therapist/AlertsSection';
+import PatientsTable from '@/components/therapist/PatientsTable';
+import RecentJournalEntries from '@/components/therapist/RecentJournalEntries';
+import Link from 'next/link';
 
-  if (!user) redirect("/auth");
+interface PatientData {
+  id: string;
+  full_name: string;
+  email: string;
+  profile_type?: string;
+  lastSessionDate?: string;
+  sessionsThisWeek?: number;
+  journalAlerts?: boolean;
+}
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+interface TherapistJournalEntry {
+  id: string;
+  patient_id: string;
+  patient_name: string;
+  created_at: string;
+  wellbeing_score?: number;
+  anxiety_level?: number;
+  notes?: string;
+}
 
-  const isTherapist = profile?.role === "therapist" || profile?.role === "kine";
-  if (!isTherapist) redirect("/dashboard");
+interface Alert {
+  patientId: string;
+  patientName: string;
+  reason: string;
+  details: string;
+  daysInactive?: number;
+}
 
-  // Fetch patients
-  const { data: patientLinks } = await supabase
-    .from("therapist_patients")
-    .select("patient_id, profiles!therapist_patients_patient_id_fkey(id, full_name, email, created_at)")
-    .eq("therapist_id", user.id)
-    .eq("status", "active");
+const daysSinceDate = (dateStr?: string) => {
+  if (!dateStr) return 999;
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
 
-  const patients = patientLinks?.map((l: any) => l.profiles).filter(Boolean) ?? [];
+export default function TherapistDashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [patients, setPatients] = useState<PatientData[]>([]);
+  const [journalEntries, setJournalEntries] = useState<TherapistJournalEntry[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        loadData(user.id, supabase);
+      }
+    });
+  }, []);
+
+  const loadData = async (therapistId: string, supabase: any) => {
+    try {
+      // Charger les patients
+      const { data: therapistPatients, error: patientsError } = await supabase
+        .from('therapist_patients')
+        .select(
+          `
+          *,
+          patient:profiles!therapist_patients_patient_id_fkey(*)
+        `
+        )
+        .eq('therapist_id', therapistId);
+
+      if (!patientsError && therapistPatients) {
+        // Charger les sessions pour chaque patient
+        const patientsWithSessions = await Promise.all(
+          therapistPatients.map(async (tp: any) => {
+            const { data: sessions } = await supabase
+              .from('sessions')
+              .select('created_at')
+              .eq('user_id', tp.patient_id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            const { data: entries } = await supabase
+              .from('journal_entries')
+              .select('anxiety_level')
+              .eq('user_id', tp.patient_id)
+              .eq('anxiety_level', '>=7')
+              .single();
+
+            const lastSessionDate = sessions?.[0]?.created_at;
+            return {
+              id: tp.patient_id,
+              full_name: tp.patient?.full_name || 'Sans nom',
+              email: tp.patient?.email || '',
+              profile_type: tp.patient?.profile_type || '—',
+              lastSessionDate,
+              sessionsThisWeek: 0,
+              journalAlerts: !!entries,
+            };
+          })
+        );
+
+        setPatients(patientsWithSessions);
+
+        // Construire les alertes
+        const newAlerts: Alert[] = [];
+        patientsWithSessions.forEach((p) => {
+          const daysSince = daysSinceDate(p.lastSessionDate);
+          if (p.journalAlerts) {
+            newAlerts.push({
+              patientId: p.id,
+              patientName: p.full_name,
+              reason: 'anxiety',
+              details: 'Anxiété signalée dans le journal',
+            });
+          } else if (daysSince > 7) {
+            newAlerts.push({
+              patientId: p.id,
+              patientName: p.full_name,
+              reason: 'inactive',
+              details: `Inactif depuis ${daysSince} jours`,
+              daysInactive: daysSince,
+            });
+          }
+        });
+        setAlerts(newAlerts);
+      }
+
+      // Charger les entrées journal récentes
+      const { data: entries } = await supabase
+        .from('journal_entries')
+        .select('*')
+        .eq('therapist_id', therapistId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (entries) {
+        // Enrichir avec le nom du patient
+        const enrichedEntries = await Promise.all(
+          entries.map(async (entry: any) => {
+            const { data: patient } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', entry.user_id)
+              .single();
+            return {
+              ...entry,
+              patient_name: patient?.full_name || 'Anonyme',
+            };
+          })
+        );
+        setJournalEntries(enrichedEntries);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!user) return <div>Chargement...</div>;
+
+  const filteredPatients = patients.filter((p) => {
+    const daysSince = daysSinceDate(p.lastSessionDate);
+    if (filterStatus === 'active') return daysSince <= 3;
+    if (filterStatus === 'inactive') return daysSince > 7;
+    return true;
+  });
+
+  const activeCount = patients.filter((p) => daysSinceDate(p.lastSessionDate) <= 3).length;
+  const alertCount = alerts.length;
 
   return (
-    <div className="min-h-screen bg-beige-200 bg-texture">
-      {/* Header */}
-      <header className="bg-beige-100/90 backdrop-blur border-b border-beige-300 px-4 py-4 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-forest-500 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-beige-100" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-                <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-              </svg>
+    <div className="min-h-screen bg-gradient-to-br from-beige-50 to-beige-100">
+      <TherapistNavbar />
+      <main className="max-w-7xl mx-auto px-4 py-8 lg:px-6">
+        {/* Header */}
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">
+            <div>
+              <h1 className="text-4xl font-bold text-forest-800 mb-1">
+                👋 Bonjour {user.user_metadata?.full_name?.split(' ')[0] || 'Dr'}
+              </h1>
+              <p className="text-forest-600">
+                {new Intl.DateTimeFormat('fr-FR', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                }).format(new Date())}
+              </p>
             </div>
-            <span className="font-semibold text-base text-forest-800">
-              Respir<span className="text-copper-500">facile</span>
-            </span>
-            <span className="hidden md:inline text-forest-400 text-xs ml-2">· Espace orthophoniste</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/settings" className="text-sm text-forest-500 hover:text-forest-700 transition-colors">
-              Paramètres
-            </Link>
-            <form action="/auth/signout" method="post">
-              <button type="submit" className="text-sm text-forest-500 hover:text-forest-700 transition-colors">
-                Déconnexion
-              </button>
-            </form>
+            <div className="flex gap-3">
+              <Link
+                href="/therapist/invite"
+                className="px-6 py-3 rounded-2xl bg-forest-600 text-white font-semibold hover:bg-forest-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                ➕ Ajouter un patient
+              </Link>
+            </div>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Title + code */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-display text-3xl font-bold text-forest-800">
-              Tableau de bord
-            </h1>
-            <p className="text-forest-500 mt-1 text-sm">
-              Code Pro :{" "}
-              <span className="font-mono font-bold text-forest-800 bg-forest-500/10 px-2 py-0.5 rounded-lg">
-                {profile?.therapist_code || "En cours de génération..."}
-              </span>
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="inline-block w-8 h-8 border-2 border-forest-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-forest-600 font-medium">Chargement du tableau de bord...</p>
+          </div>
+        ) : patients.length === 0 ? (
+          /* Empty state */
+          <div className="bg-white rounded-3xl border border-beige-200 p-12 shadow-sm text-center max-w-2xl mx-auto">
+            <div className="text-6xl mb-4">🎯</div>
+            <h2 className="text-2xl font-bold text-forest-800 mb-2">
+              Commencez en ajoutant vos premiers patients
+            </h2>
+            <p className="text-forest-600 mb-8 max-w-xs mx-auto leading-relaxed">
+              Partagez votre code PRO avec vos patients pour qu'ils accèdent gratuitement à Respirfacile.
+              Vous pourrez ensuite suivre leur progression en temps réel.
             </p>
+            <Link
+              href="/therapist/invite"
+              className="inline-block px-8 py-4 bg-forest-600 text-white font-semibold rounded-2xl hover:bg-forest-700 transition-colors"
+            >
+              ➕ Ajouter un patient
+            </Link>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-forest-500/10 border border-forest-500/20 px-4 py-2 text-sm text-forest-700">
-            <span className="w-2 h-2 rounded-full bg-forest-500" />
-            {patients.length} patient{patients.length !== 1 ? "s" : ""} actif{patients.length !== 1 ? "s" : ""}
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {[
-            {
-              label: "Patients actifs",
-              value: patients.length.toString(),
-              icon: (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                </svg>
-              ),
-            },
-            {
-              label: "Séances ce mois",
-              value: "—",
-              icon: (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                </svg>
-              ),
-            },
-            {
-              label: "Observance moyenne",
-              value: "—",
-              icon: (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              ),
-            },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-beige-100 rounded-3xl border border-beige-300 p-6 text-center shadow-beige">
-              <div className="w-10 h-10 rounded-full bg-forest-500/10 border border-forest-500/20 flex items-center justify-center text-forest-600 mx-auto mb-3">
-                {stat.icon}
-              </div>
-              <p className="font-display text-2xl font-bold text-forest-800">{stat.value}</p>
-              <p className="text-xs text-forest-500 mt-1">{stat.label}</p>
+        ) : (
+          /* Dashboard */
+          <div className="space-y-8">
+            {/* Stats grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <DashboardStatCard
+                value={patients.length}
+                label="patients total"
+                icon="👥"
+              />
+              <DashboardStatCard
+                value={activeCount}
+                label="actifs ce mois"
+                icon="🟢"
+                status="success"
+              />
+              <DashboardStatCard
+                value={alertCount}
+                label={alertCount > 0 ? 'alertes' : 'alertes'}
+                icon="⚠️"
+                status={alertCount > 0 ? 'alert' : 'success'}
+              />
+              <DashboardStatCard
+                value={journalEntries.length}
+                label="bilans cette semaine"
+                icon="📓"
+              />
             </div>
-          ))}
-        </div>
 
-        {/* Patients list */}
-        <div className="bg-beige-100 rounded-3xl border border-beige-300 shadow-beige overflow-hidden">
-          <div className="px-6 py-5 border-b border-beige-300">
-            <h2 className="font-semibold text-lg text-forest-800">Mes patients</h2>
-          </div>
+            {/* Alerts section */}
+            <AlertsSection alerts={alerts} />
 
-          {patients.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-forest-500/10 border border-forest-500/20 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-forest-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                </svg>
+            {/* Main content grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Patients table - large */}
+              <div className="lg:col-span-2">
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-forest-800">📋 Mes patients</h2>
+                  <p className="text-forest-600 text-sm mt-1">
+                    Gestion et suivi de vos patients en un coup d'œil
+                  </p>
+                </div>
+                <PatientsTable
+                  patients={filteredPatients}
+                  onFilterChange={setFilterStatus}
+                  currentFilter={filterStatus}
+                />
               </div>
-              <p className="font-semibold text-forest-700 mb-2">
-                Aucun patient encore
-              </p>
-              <p className="text-sm text-forest-500 mb-6 max-w-xs mx-auto">
-                Partagez votre code Pro à vos patients pour qu&apos;ils rejoignent.
-              </p>
-              <div className="inline-flex items-center gap-3 rounded-2xl bg-forest-500/10 border border-forest-500/20 px-6 py-3">
-                <span className="text-sm text-forest-600">Votre code</span>
-                <span className="font-mono font-bold text-forest-800 text-lg">
-                  {profile?.therapist_code || "—"}
-                </span>
+
+              {/* Recent journal entries - sidebar */}
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-forest-800">📓 Derniers bilans</h2>
+                  <p className="text-forest-600 text-sm mt-1">
+                    Journal des patients (dernière semaine)
+                  </p>
+                </div>
+                <RecentJournalEntries entries={journalEntries as any} />
               </div>
             </div>
-          ) : (
-            <ul className="divide-y divide-beige-300">
-              {patients.map((patient: any) => (
-                <li key={patient.id}>
-                  <Link
-                    href={`/patient/${patient.id}`}
-                    className="flex items-center justify-between px-6 py-4 hover:bg-beige-200 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-forest-500/10 border border-forest-500/20 flex items-center justify-center text-forest-600 text-sm font-semibold">
-                        {(patient.full_name || patient.email)?.[0]?.toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium text-forest-800">
-                          {patient.full_name || patient.email}
-                        </p>
-                        <p className="text-xs text-forest-500">{patient.email}</p>
-                      </div>
-                    </div>
-                    <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );

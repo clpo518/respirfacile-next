@@ -1,35 +1,78 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { InstallPWA } from "@/components/InstallPWA";
+
+const siteUrl = "https://respirfacile.fr";
 
 export const metadata: Metadata = {
-  title: "Respirfacile — Rééducation respiratoire pour l'apnée du sommeil",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Respirfacile — Rééducation respiratoire pour l'apnée du sommeil",
+    template: "%s | Respirfacile",
+  },
   description:
-    "Application de thérapie myofonctionnelle orofaciale (OMT) pour patients SAOS. Prescrite par les orthophonistes, pratiquée à domicile. Basée sur la méta-analyse Camacho 2015 (-50% IAH).",
+    "L'application de thérapie myofonctionnelle orofaciale prescrite par les orthophonistes et kinésithérapeutes. −50% d'IAH en 8 semaines (Camacho 2015). Essai 30 jours gratuit.",
   keywords: [
     "apnée du sommeil",
     "SAOS",
     "thérapie myofonctionnelle",
-    "OMT",
-    "orthophoniste",
+    "TMOF",
     "rééducation respiratoire",
+    "orthophoniste",
+    "kinésithérapeute",
+    "exercices SAOS",
+    "ronflement",
+    "CPAP",
+    "pause contrôlée",
+    "cohérence cardiaque",
   ],
+  authors: [{ name: "Respirfacile", url: siteUrl }],
+  creator: "Respirfacile",
+  publisher: "Respirfacile",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
   openGraph: {
-    title: "Respirfacile — Rééducation respiratoire pour l'apnée du sommeil",
-    description:
-      "Prescrite par votre orthophoniste. -50% IAH en moyenne (Camacho et al. 2015). Essai 30 jours gratuit.",
     type: "website",
-    locale: "fr_FR",
+    url: siteUrl,
+    title: "Respirfacile — Rééducation respiratoire",
+    description: "−50% d'IAH. Essai 30 jours gratuit.",
+    siteName: "Respirfacile",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="fr" className="h-full">
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+    <html lang="fr">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2D5016" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Respirfacile" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
+      <body className="font-sans antialiased">
+        {children}
+        <InstallPWA />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
+      </body>
     </html>
   );
 }
