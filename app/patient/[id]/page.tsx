@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getExerciseById, CATEGORY_LABELS } from "@/lib/data/exercises";
 import { WeeklyObservanceChart } from "@/components/therapist/WeeklyObservanceChart";
+import { ShareBilanModal } from "@/components/therapist/ShareBilanModal";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -180,34 +181,38 @@ export default async function PatientDetailPage({ params }: Props) {
           </div>
           <div className="flex items-center gap-3">
             <Link
+              href={`/therapist/patients/${id}/messages`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-beige-300 hover:bg-beige-400 text-forest-800 text-sm font-semibold rounded-full transition-colors"
+            >
+              💬 Message
+            </Link>
+            <Link
               href={`/therapist/patients/${id}/notes`}
               className="inline-flex items-center gap-2 px-4 py-2 bg-beige-300 hover:bg-beige-400 text-forest-800 text-sm font-semibold rounded-full transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Note thérapeutique
+              Notes
             </Link>
             <Link
               href={`/therapist/patients/${id}/program`}
               className="inline-flex items-center gap-2 px-4 py-2 bg-copper-500 hover:bg-copper-600 text-beige-100 text-sm font-semibold rounded-full transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6-6h6M6 12a6 6 0 1112 0 6 6 0 01-12 0z" />
-              </svg>
-              💊 Prescrire des exercices
+              💊 Prescrire
             </Link>
             <a
               href={`/api/bilan/${id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-forest-500 hover:bg-forest-600 text-beige-100 text-sm font-semibold rounded-full transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-beige-300 hover:bg-beige-400 text-forest-800 text-sm font-semibold rounded-full transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Exporter bilan PDF
+              PDF
             </a>
+            <ShareBilanModal patientId={id} patientName={patientName} />
           </div>
         </div>
       </header>

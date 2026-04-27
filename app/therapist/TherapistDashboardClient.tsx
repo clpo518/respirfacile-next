@@ -6,6 +6,8 @@ import DashboardStatCard from '@/components/therapist/DashboardStatCard';
 import AlertsSection from '@/components/therapist/AlertsSection';
 import PatientsTable from '@/components/therapist/PatientsTable';
 import RecentJournalEntries from '@/components/therapist/RecentJournalEntries';
+import { OnboardingChecklist } from '@/components/therapist/OnboardingChecklist';
+import { DemoPatientBanner } from '@/components/therapist/DemoPatientBanner';
 import Link from 'next/link';
 import { getRetentionStatus, daysSince } from '@/lib/retention';
 
@@ -48,6 +50,7 @@ export default function TherapistDashboardClient() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'slipping' | 'inactive'>('all');
+  const [hasMessages, setHasMessages] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -158,6 +161,14 @@ export default function TherapistDashboardClient() {
         setAlerts(newAlerts);
       }
 
+      // Vérifier si l'ortho a déjà envoyé au moins un message (pour l'onboarding)
+      const { count: msgCount } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('therapist_id', therapistId)
+        .eq('sender_role', 'therapist');
+      setHasMessages((msgCount || 0) > 0);
+
       // Charger les entrées journal récentes
       const { data: entries } = await supabase
         .from('journal_entries')
@@ -241,26 +252,43 @@ export default function TherapistDashboardClient() {
             <p className="text-forest-600 font-medium">Chargement du tableau de bord...</p>
           </div>
         ) : patients.length === 0 ? (
-          /* Empty state */
-          <div className="bg-white rounded-3xl border border-beige-200 p-12 shadow-sm text-center max-w-2xl mx-auto">
-            <div className="text-6xl mb-4">🎯</div>
-            <h2 className="text-2xl font-bold text-forest-800 mb-2">
-              Commencez en ajoutant vos premiers patients
-            </h2>
-            <p className="text-forest-600 mb-8 max-w-xs mx-auto leading-relaxed">
-              Partagez votre code PRO avec vos patients pour qu'ils accèdent gratuitement à Respirfacile.
-              Vous pourrez ensuite suivre leur progression en temps réel.
-            </p>
-            <Link
-              href="/therapist/invite"
-              className="inline-block px-8 py-4 bg-forest-600 text-white font-semibold rounded-2xl hover:bg-forest-700 transition-colors"
-            >
-              ➕ Ajouter un patient
-            </Link>
+          /* Empty state avec onboarding */
+          <div className="max-w-2xl mx-auto">
+            <OnboardingChecklist
+              hasPatients={false}
+              hasPrescriptions={false}
+              hasMessages={false}
+              therapistCode={profile?.therapist_code || ''}
+            />
+            {user && <DemoPatientBanner therapistId={user.id} />}
+            <div className="bg-white rounded-3xl border border-beige-200 p-12 shadow-sm text-center">
+              <div className="text-6xl mb-4">🌿</div>
+              <h2 className="text-2xl font-bold text-forest-800 mb-2">
+                Bienvenue sur Respirfacile
+              </h2>
+              <p className="text-forest-600 mb-8 max-w-sm mx-auto leading-relaxed">
+                Commencez par inviter votre premier patient. Il rejoint gratuitement avec votre code PRO en moins de 30 secondes.
+              </p>
+              <Link
+                href="/therapist/invite"
+                className="inline-block px-8 py-4 bg-forest-600 text-white font-semibold rounded-2xl hover:bg-forest-700 transition-colors"
+              >
+                ➕ Inviter mon premier patient
+              </Link>
+            </div>
           </div>
         ) : (
           /* Dashboard */
           <div className="space-y-8">
+            {/* Onboarding checklist — disparaît une fois les 3 étapes faites */}
+            {(!patients.length || !patients.some(p => (p.prescriptionsCount || 0) > 0) || !hasMessages) && (
+              <OnboardingChecklist
+                hasPatients={patients.length > 0}
+                hasPrescriptions={patients.some(p => (p.prescriptionsCount || 0) > 0)}
+                hasMessages={hasMessages}
+                therapistCode={profile?.therapist_code || ''}
+              />
+            )}
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <DashboardStatCard

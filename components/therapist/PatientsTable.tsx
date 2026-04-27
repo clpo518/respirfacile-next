@@ -141,8 +141,11 @@ export default function PatientsTable({ patients, onFilterChange, currentFilter 
                   {/* Actions */}
                   <td className="px-4 py-4">
                     <div className="flex items-center justify-end gap-1">
-                      <Link href={`/therapist/patients/${patient.id}`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Voir">
+                      <Link href={`/therapist/patients/${patient.id}`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Voir le profil">
                         📊
+                      </Link>
+                      <Link href={`/therapist/patients/${patient.id}/messages`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Envoyer un message">
+                        💬
                       </Link>
                       <Link href={`/therapist/patients/${patient.id}/program`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Prescrire">
                         💊

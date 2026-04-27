@@ -7,6 +7,7 @@ import NextExercise from "@/components/NextExercise";
 import { StreakDisplay } from "@/components/StreakDisplay";
 import { MoodRing } from "@/components/MoodRing";
 import { DashboardShortcuts } from "@/components/DashboardShortcuts";
+import { PatientMessages } from "@/components/PatientMessages";
 import { EXERCISES } from "@/lib/data/exercises";
 import CelebrationToast from "@/components/CelebrationToast";
 import Link from "next/link";
@@ -159,6 +160,11 @@ export default async function DashboardPage({
                 : "Bonne fin de journée."}
           </p>
         </div>
+
+        {/* Messages de l'ortho — priorité haute, en premier */}
+        <Suspense fallback={null}>
+          <PatientMessages patientId={user.id} />
+        </Suspense>
 
         {/* Mood Ring */}
         <div className="mb-6">
