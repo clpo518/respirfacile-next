@@ -29,7 +29,7 @@ export function WeeklyCheckIn({ hasJournalThisWeek = false }: WeeklyCheckInProps
           <p className="text-sm text-amber-700 mt-1">Partagez votre ressenti avec votre orthophoniste</p>
         </div>
         <Link
-          href="/journal/new"
+          href="/journal"
           className="bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-600 transition-colors whitespace-nowrap"
         >
           Faire mon bilan

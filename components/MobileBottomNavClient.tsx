@@ -22,13 +22,14 @@ export function MobileBottomNavClient() {
           <Link
             key={item.href}
             href={item.href}
+            aria-label={item.label}
             className={`flex-1 flex flex-col items-center py-3 transition-colors ${
               isActive
                 ? "text-forest-600 border-t-2 border-forest-600"
-                : "text-stone-400 hover:text-stone-600"
+                : "text-forest-400 hover:text-forest-600"
             }`}
           >
-            <span className="text-lg">{item.icon}</span>
+            <span className="text-lg" aria-hidden="true">{item.icon}</span>
             <span className="text-xs font-medium">{item.label}</span>
           </Link>
         );

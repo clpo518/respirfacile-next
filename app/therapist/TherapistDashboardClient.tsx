@@ -90,55 +90,68 @@ export default function TherapistDashboardClient() {
         .eq('therapist_id', therapistId);
 
       if (!patientsError && therapistPatients) {
-        // Charger les données enrichies pour chaque patient
+        const patientIds: string[] = therapistPatients.map((tp: any) => tp.patient_id);
+
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         const oneWeekAgoStr = oneWeekAgo.toISOString();
 
-        const patientsWithSessions = await Promise.all(
-          therapistPatients.map(async (tp: any) => {
-            // Dernière séance
-            const { data: lastSessions } = await supabase
-              .from('sessions')
-              .select('created_at')
-              .eq('user_id', tp.patient_id)
-              .order('created_at', { ascending: false })
-              .limit(1);
+        // Batch queries — une seule requête par type au lieu d'une par patient
+        const [
+          { data: allSessions },
+          { data: weekSessions },
+          { data: allPrescriptions },
+        ] = await Promise.all([
+          // Toutes les sessions des patients (dernière par user_id)
+          supabase
+            .from('sessions')
+            .select('user_id, created_at')
+            .in('user_id', patientIds)
+            .order('created_at', { ascending: false }),
+          // Sessions cette semaine
+          supabase
+            .from('sessions')
+            .select('user_id')
+            .in('user_id', patientIds)
+            .gte('created_at', oneWeekAgoStr),
+          // Prescriptions actives
+          supabase
+            .from('prescriptions')
+            .select('patient_id')
+            .in('patient_id', patientIds)
+            .eq('is_active', true),
+        ]);
 
-            // Total séances
-            const { count: totalCount } = await supabase
-              .from('sessions')
-              .select('id', { count: 'exact', head: true })
-              .eq('user_id', tp.patient_id);
+        // Agréger les données par patient côté JS
+        const lastSessionByPatient: Record<string, string> = {};
+        const totalByPatient: Record<string, number> = {};
+        const weekByPatient: Record<string, number> = {};
+        const prescrByPatient: Record<string, number> = {};
 
-            // Séances cette semaine
-            const { count: weekCount } = await supabase
-              .from('sessions')
-              .select('id', { count: 'exact', head: true })
-              .eq('user_id', tp.patient_id)
-              .gte('created_at', oneWeekAgoStr);
+        (allSessions || []).forEach((s: any) => {
+          totalByPatient[s.user_id] = (totalByPatient[s.user_id] || 0) + 1;
+          if (!lastSessionByPatient[s.user_id]) {
+            lastSessionByPatient[s.user_id] = s.created_at;
+          }
+        });
+        (weekSessions || []).forEach((s: any) => {
+          weekByPatient[s.user_id] = (weekByPatient[s.user_id] || 0) + 1;
+        });
+        (allPrescriptions || []).forEach((p: any) => {
+          prescrByPatient[p.patient_id] = (prescrByPatient[p.patient_id] || 0) + 1;
+        });
 
-            // Prescriptions actives
-            const { count: prescrCount } = await supabase
-              .from('prescriptions')
-              .select('id', { count: 'exact', head: true })
-              .eq('patient_id', tp.patient_id)
-              .eq('is_active', true);
-
-            const lastSessionDate = lastSessions?.[0]?.created_at;
-            return {
-              id: tp.patient_id,
-              full_name: tp.patient?.full_name || 'Sans nom',
-              email: tp.patient?.email || '',
-              profile_type: tp.patient?.profile_type,
-              lastSessionDate,
-              sessionsTotal: totalCount || 0,
-              sessionsThisWeek: weekCount || 0,
-              prescriptionsCount: prescrCount || 0,
-              journalAlerts: false,
-            };
-          })
-        );
+        const patientsWithSessions = therapistPatients.map((tp: any) => ({
+          id: tp.patient_id,
+          full_name: tp.patient?.full_name || 'Sans nom',
+          email: tp.patient?.email || '',
+          profile_type: tp.patient?.profile_type,
+          lastSessionDate: lastSessionByPatient[tp.patient_id],
+          sessionsTotal: totalByPatient[tp.patient_id] || 0,
+          sessionsThisWeek: weekByPatient[tp.patient_id] || 0,
+          prescriptionsCount: prescrByPatient[tp.patient_id] || 0,
+          journalAlerts: false,
+        }));
 
         setPatients(patientsWithSessions);
 
@@ -185,20 +198,17 @@ export default function TherapistDashboardClient() {
         .limit(10);
 
       if (entries) {
-        // Enrichir avec le nom du patient
-        const enrichedEntries = await Promise.all(
-          entries.map(async (entry: any) => {
-            const { data: patient } = await supabase
-              .from('profiles')
-              .select('full_name')
-              .eq('id', entry.user_id)
-              .single();
-            return {
-              ...entry,
-              patient_name: patient?.full_name || 'Anonyme',
-            };
-          })
-        );
+        // Enrichir avec le nom du patient en utilisant la map déjà construite (pas de N+1)
+        const patientNameById: Record<string, string> = {};
+        (therapistPatients ?? []).forEach((tp: any) => {
+          if (tp.patient_id && tp.patient?.full_name) {
+            patientNameById[tp.patient_id] = tp.patient.full_name;
+          }
+        });
+        const enrichedEntries = entries.map((entry: any) => ({
+          ...entry,
+          patient_name: patientNameById[entry.user_id] || 'Anonyme',
+        }));
         setJournalEntries(enrichedEntries);
       }
     } finally {

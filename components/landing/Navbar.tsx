@@ -19,7 +19,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Link href="/auth" className="text-sm text-forest-600 hover:text-forest-700 transition-colors font-medium">Connexion</Link>
-          <Link href="/auth?mode=signup&role=therapist" className="bg-[#2D5016] text-white text-sm px-5 py-2 rounded-full font-semibold hover:bg-[#1e3a0f] transition-colors shadow-sm">
+          <Link href="/auth?mode=signup&role=therapist" className="bg-forest-700 text-white text-sm px-5 py-2 rounded-full font-semibold hover:bg-forest-800 transition-colors shadow-sm">
             Essai gratuit →
           </Link>
         </div>
@@ -41,7 +41,7 @@ export function Navbar() {
           <Link href="/pricing" className="block text-forest-700 font-medium py-2.5 hover:text-forest-700" onClick={() => setOpen(false)}>Tarifs</Link>
           <div className="pt-3 border-t border-beige-300 space-y-2">
             <Link href="/auth" className="block text-forest-700 py-2.5 font-medium" onClick={() => setOpen(false)}>Connexion</Link>
-            <Link href="/auth?mode=signup&role=therapist" className="block bg-[#2D5016] text-white px-4 py-3 rounded-2xl text-center font-semibold shadow-sm" onClick={() => setOpen(false)}>
+            <Link href="/auth?mode=signup&role=therapist" className="block bg-forest-700 text-white px-4 py-3 rounded-2xl text-center font-semibold shadow-sm" onClick={() => setOpen(false)}>
               Essai gratuit 30 jours →
             </Link>
           </div>
