@@ -4,7 +4,7 @@ import Link from "next/link"
 export function HeroSection() {
   const stats = [
     { value: "15 min", label: "par jour suffisent" },
-    { value: "8 sem.", label: "pour les premiers resultats" },
+    { value: "8 sem.", label: "pour les premiers résultats" },
     { value: "30 j.", label: "d'essai gratuit" },
   ]
   return (
@@ -20,16 +20,16 @@ export function HeroSection() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-forest-800 leading-[1.08] mb-6 tracking-tight">
-            Vos patients pratiquent.<br/>
-            <span style={{color: "#2D5016"}}>Vous voyez les résultats.</span>
+            Guidez la rééducation respiratoire de vos patients —
+            <span style={{color: "#2D5016"}}>même quand ils sont chez eux.</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-forest-600 leading-relaxed mb-4 max-w-2xl mx-auto font-light">
-            Prescrivez des exercices de respiration guidés à vos patients. Suivez leur progression à distance. Exportez les bilans en un clic.
+          <p className="text-xl md:text-2xl text-forest-700 leading-relaxed mb-4 max-w-2xl mx-auto font-light">
+            Application de rééducation respiratoire pour SAOS et TMOF — prescrite par vous, pratiquée chaque jour par vos patients, suivie depuis votre tableau de bord.
           </p>
 
-          <p className="text-base text-forest-500 mb-10 max-w-xl mx-auto">
-            Vos patients accèdent gratuitement via un code que vous leur envoyez.
+          <p className="text-base text-forest-600 mb-10 max-w-xl mx-auto">
+            15 min par jour. Vos patients ont les instructions. Vous recevez les données. Les résultats arrivent.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -49,18 +49,18 @@ export function HeroSection() {
               J&apos;ai un code patient
             </Link>
           </div>
-          <p className="text-sm text-forest-400 mt-5">Sans carte bancaire · Sans engagement · Données sécurisées</p>
+          <p className="text-sm text-forest-500 mt-5">Sans carte bancaire · Sans engagement · Données sécurisées</p>
         </div>
 
         <div className="grid grid-cols-3 gap-3 sm:gap-5 max-w-lg mx-auto mb-5">
           {stats.map((s) => (
             <div key={s.value} className="bg-white/80 backdrop-blur rounded-2xl p-4 sm:p-5 text-center border border-white shadow-sm">
               <div className="text-2xl sm:text-3xl font-bold" style={{color: "#2D5016"}}>{s.value}</div>
-              <div className="text-xs text-forest-500 mt-1 leading-tight">{s.label}</div>
+              <div className="text-xs text-forest-600 mt-1 leading-tight">{s.label}</div>
             </div>
           ))}
         </div>
-        <p className="text-xs text-forest-400 text-center">*Source : etude clinique publiee dans CHEST (2009)</p>
+        <p className="text-xs text-forest-500 text-center">*Source : étude clinique publiée dans CHEST (2009)</p>
       </div>
     </section>
   )

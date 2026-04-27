@@ -6,14 +6,14 @@ export function FounderSection() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-[#8B4513] mb-5">Le fondateur</p>
             <h2 className="text-4xl font-bold text-forest-800 mb-5 leading-tight">
-              Créé par quelqu&apos;un qui<br/>a vécu le problème.
+              Né d&apos;une frustration<br/>d&apos;orthophoniste.
             </h2>
-            <p className="text-forest-600 leading-relaxed mb-5 text-lg">
-              Je m&apos;appelle Clément. J&apos;ai fondé <strong>parlermoinsvite.fr</strong>, une app de rééducation de la fluence suivie par 120+ patients. J&apos;ai vu la puissance du suivi numérique entre les séances.
+            <p className="text-forest-700 leading-relaxed mb-5 text-lg">
+              Je m&apos;appelle Clément. J&apos;ai fondé <strong>parlermoinsvite.fr</strong>, une app de rééducation de la fluence utilisée par 120+ patients et leurs orthophonistes. J&apos;ai mesuré ce que le suivi numérique change vraiment.
             </p>
-            <p className="text-forest-600 leading-relaxed mb-6">
-              Respirfacile est né du feedback de <strong>Mathilde</strong>, orthophoniste spécialisée SAOS :
-              <em className="block mt-2 pl-4 border-l-4 border-[#2D5016]/20 text-forest-700">
+            <p className="text-forest-700 leading-relaxed mb-6">
+              Respirfacile est né d&apos;une conversation avec <strong>Mathilde</strong>, orthophoniste spécialisée SAOS :
+              <em className="block mt-3 pl-4 border-l-4 border-[#2D5016]/30 text-forest-800 not-italic font-medium">
                 &ldquo;Mes patients oublient de pratiquer entre les séances. Si seulement ils avaient un outil guidé au quotidien — les résultats seraient bien meilleurs.&rdquo;
               </em>
             </p>
@@ -21,7 +21,7 @@ export function FounderSection() {
               <div className="w-10 h-10 rounded-full bg-[#2D5016]/10 flex items-center justify-center text-xl">🫁</div>
               <div>
                 <div className="font-bold text-forest-800">Clément Pontegnier</div>
-                <div className="text-sm text-forest-500">Fondateur — Annecy, France</div>
+                <div className="text-sm text-forest-600">Fondateur — Annecy, France</div>
               </div>
             </div>
           </div>

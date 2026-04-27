@@ -4,33 +4,33 @@ export function ProSection() {
   const features = [
     {
       emoji: "📋",
-      title: "Programmes personnalisés",
-      desc: "4 profils patients prêts à l'emploi : SAOS léger, sévère sous CPAP, TMOF, mixte. Prescription en 2 minutes.",
+      title: "Prescription en 2 minutes",
+      desc: "4 profils prêts à l'emploi : SAOS léger, sévère sous CPAP, TMOF, mixte. Vous choisissez, vous envoyez le code. C'est tout.",
     },
     {
       emoji: "📓",
       title: "Journal de bord patient",
-      desc: "Bien-être, qualité du sommeil, difficulté perçue. Vous voyez les alertes : anxiété, abandon, douleur signalée.",
+      desc: "Qualité du sommeil, bien-être, difficulté perçue. Vous voyez les signaux faibles avant qu'ils abandonnent.",
     },
     {
       emoji: "📈",
-      title: "Graphiques de progression",
-      desc: "Scores pause contrôlée, cohérence cardiaque, nasale — semaine par semaine. La progression visible motive.",
+      title: "Graphiques semaine par semaine",
+      desc: "Pause contrôlée, cohérence cardiaque, respiration nasale — chaque score tracé. La progression visible motive et vous informe.",
     },
     {
       emoji: "📄",
-      title: "Export PDF bilan",
-      desc: "Rapport complet et professionnel en un clic, prêt pour le médecin du sommeil ou votre compte-rendu.",
+      title: "Bilan PDF pour le médecin",
+      desc: "Rapport complet en un clic. Prêt pour le médecin du sommeil, le pneumologue, ou votre propre compte-rendu.",
     },
     {
       emoji: "🔔",
-      title: "Alertes inactivité",
-      desc: "Notification automatique si un patient n'a pas pratiqué depuis 5 jours. Vous intervenez au bon moment.",
+      title: "Alertes inactivité automatiques",
+      desc: "Vous êtes notifié si un patient n'a pas pratiqué depuis 5 jours. Vous intervenez avant que la dynamique se perde.",
     },
     {
       emoji: "🔒",
-      title: "RGPD & secret médical",
-      desc: "Hébergement Europe, chiffrement de bout en bout, accès par rôle strict. Vos patients ne voient que leurs données.",
+      title: "Secret médical respecté",
+      desc: "Hébergement Europe, chiffrement de bout en bout. Vos patients ne voient que leurs propres données. RGPD natif.",
     },
   ]
   return (
@@ -38,8 +38,8 @@ export function ProSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#8B4513] mb-3">Fonctionnalités</p>
-          <h2 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">Tout ce dont vous avez besoin</h2>
-          <p className="text-xl text-forest-500 max-w-2xl mx-auto font-light">Conçu avec des orthophonistes spécialisées SAOS. Rien de superflu, rien de manquant.</p>
+          <h2 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">Tout pour suivre vos patients<br/>entre les séances</h2>
+          <p className="text-xl text-forest-600 max-w-2xl mx-auto font-light">Conçu avec des orthophonistes spécialisées SAOS. Rien de superflu — tout ce qui change vraiment la régularité.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
@@ -47,7 +47,7 @@ export function ProSection() {
             <div key={f.title} className="bg-beige-100 rounded-3xl p-7 border border-beige-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
               <div className="text-3xl mb-4">{f.emoji}</div>
               <h3 className="font-bold text-forest-800 text-lg mb-2">{f.title}</h3>
-              <p className="text-forest-500 text-sm leading-relaxed">{f.desc}</p>
+              <p className="text-forest-600 text-sm leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -62,7 +62,7 @@ export function ProSection() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
             </svg>
           </Link>
-          <p className="text-sm text-forest-400 mt-3">30 jours gratuits · Sans carte bancaire · Résiliable à tout moment</p>
+          <p className="text-sm text-forest-600 mt-3">30 jours gratuits · Sans carte bancaire · Résiliable à tout moment</p>
         </div>
       </div>
     </section>
