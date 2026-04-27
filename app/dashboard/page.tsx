@@ -71,6 +71,57 @@ export default async function DashboardPage({
     sessionsTodayByExercise[key] = (sessionsTodayByExercise[key] || 0) + 1;
   });
 
+  // --- VRAIES STATS ---
+  // Séances cette semaine
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + (weekStart.getDay() === 0 ? -6 : 1));
+  weekStart.setHours(0, 0, 0, 0);
+  const { count: sessionsThisWeek } = await supabase
+    .from("sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", weekStart.toISOString());
+
+  // Objectif semaine = somme des fréquences prescrites × 5 jours (ou fallback 5)
+  const weeklyGoal = (prescriptions || []).reduce((acc, p) => acc + (p.frequency_per_day || 1), 0) * 5 || 5;
+
+  // Meilleur score Pause Contrôlée (tous temps)
+  const { data: bestScoreData } = await supabase
+    .from("sessions")
+    .select("score")
+    .eq("user_id", user.id)
+    .eq("exercise_id", "pause_controlee_decouverte")
+    .not("score", "is", null)
+    .order("score", { ascending: false })
+    .limit(1);
+  const bestPauseScore = bestScoreData?.[0]?.score ?? null;
+
+  // Streak — jours consécutifs (simple: compter depuis hier en remontant)
+  const { data: allSessions } = await supabase
+    .from("sessions")
+    .select("created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  let streak = 0;
+  if (allSessions && allSessions.length > 0) {
+    const sessionDays = new Set(
+      allSessions.map((s) => new Date(s.created_at).toISOString().slice(0, 10))
+    );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Commencer depuis aujourd'hui ou hier
+    const checkDate = new Date(today);
+    const todayStr = checkDate.toISOString().slice(0, 10);
+    if (!sessionDays.has(todayStr)) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+    while (sessionDays.has(checkDate.toISOString().slice(0, 10))) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+  }
+
   // Matcher avec le catalogue d'exercices
   const prescribedExercises = (prescriptions || [])
     .map((p) => {
@@ -189,64 +240,47 @@ export default async function DashboardPage({
           <StreakDisplay userId={user.id} />
         </div>
 
-        {/* Next Exercise — Hero Card */}
-        <div className="mb-8">
-          <NextExercise exercise={EXERCISES[0]} />
-        </div>
+        {/* Next Exercise — Hero Card — pointe le premier exercice prescrit non fait */}
+        {(() => {
+          const nextEx = prescribedExercises.find((e) => !e.isDone) ?? prescribedExercises[0];
+          const fallbackEx = nextEx ?? EXERCISES[0];
+          return (
+            <div className="mb-8">
+              <NextExercise exercise={fallbackEx} />
+            </div>
+          );
+        })()}
 
-        {/* Stats en grid */}
+        {/* Stats en grid — vraies données BDD */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {[
             {
               label: "Séances cette semaine",
-              value: "0/5",
+              value: `${sessionsThisWeek ?? 0}/${weeklyGoal}`,
+              color: (sessionsThisWeek ?? 0) >= weeklyGoal ? "text-green-700" : "text-forest-800",
               icon: (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0121 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
-                  />
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0121 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
               ),
             },
             {
-              label: "Score Pause Contrôlée",
-              value: "—",
+              label: "Meilleur score pause",
+              value: bestPauseScore !== null ? `${bestPauseScore} pas` : "—",
+              color: bestPauseScore !== null ? "text-copper-700" : "text-forest-400",
               icon: (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" />
                 </svg>
               ),
             },
             {
               label: "Jours consécutifs",
-              value: "0",
+              value: streak > 0 ? `${streak} 🔥` : "0",
+              color: streak >= 7 ? "text-amber-600" : streak > 0 ? "text-forest-700" : "text-forest-400",
               icon: (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 019 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
-                  />
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 019 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
                 </svg>
               ),
             },
@@ -258,7 +292,7 @@ export default async function DashboardPage({
               <div className="w-10 h-10 rounded-full bg-forest-500/10 border border-forest-500/20 flex items-center justify-center text-forest-600 mx-auto mb-3">
                 {stat.icon}
               </div>
-              <p className="font-display text-2xl font-bold text-forest-800">
+              <p className={`font-display text-2xl font-bold ${stat.color}`}>
                 {stat.value}
               </p>
               <p className="text-xs text-forest-500 mt-1">{stat.label}</p>
@@ -346,16 +380,29 @@ export default async function DashboardPage({
           )}
         </div>
 
-        {/* Graphique progression + heatmap */}
+        {/* Graphique progression + heatmap — dynamique par exercices prescrits */}
         <div className="space-y-4 mb-8">
           <h2 className="font-semibold text-lg text-forest-800">📊 Votre progression</h2>
-          <Suspense fallback={<div className="h-40 bg-beige-100 rounded-3xl animate-pulse" />}>
-            <ProgressionChart
-              userId={user.id}
-              exerciseId="pause_controlee_decouverte"
-              title="Pause Contrôlée — évolution du score"
-            />
-          </Suspense>
+          {prescribedExercises.length > 0 ? (
+            prescribedExercises.map((ex) => (
+              <Suspense key={ex.id} fallback={<div className="h-40 bg-beige-100 rounded-3xl animate-pulse" />}>
+                <ProgressionChart
+                  userId={user.id}
+                  exerciseId={ex.id}
+                  title={`${ex.emoji} ${ex.name_fr} — évolution`}
+                />
+              </Suspense>
+            ))
+          ) : (
+            // Fallback : afficher Pause Contrôlée par défaut
+            <Suspense fallback={<div className="h-40 bg-beige-100 rounded-3xl animate-pulse" />}>
+              <ProgressionChart
+                userId={user.id}
+                exerciseId="pause_controlee_decouverte"
+                title="🫁 Pause Contrôlée — évolution du score"
+              />
+            </Suspense>
+          )}
           <Suspense fallback={<div className="h-32 bg-beige-100 rounded-3xl animate-pulse" />}>
             <ActivityHeatmap userId={user.id} />
           </Suspense>

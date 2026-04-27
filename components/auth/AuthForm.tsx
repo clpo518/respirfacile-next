@@ -273,15 +273,18 @@ export function AuthForm() {
                 className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500 text-forest-800 placeholder-forest-400 font-mono uppercase transition-colors"
               />
               <p className="text-xs text-forest-400 mt-1.5">
-                Votre orthophoniste ou kine vous a envoye ce code par email ou SMS.
+                Votre orthophoniste ou kinesitherapeute vous a transmis ce code par email ou lors de votre consultation.
               </p>
             </div>
           )}
 
-          {/* Patient sans code */}
+          {/* Patient sans code — bloc informatif amélioré */}
           {mode === 'signup' && role === 'patient' && (
-            <div className="bg-beige-200 border border-beige-300 rounded-2xl px-4 py-3 text-xs text-forest-600">
-              Pas de code ? Demandez a votre orthophoniste ou kinesitherapeute de vous en envoyer un. C&apos;est lui qui gere votre acces.
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
+              <p className="text-xs font-semibold text-amber-800 mb-1">📋 Pas encore de code ?</p>
+              <p className="text-xs text-amber-700 leading-relaxed">
+                L&apos;acces a Respirfacile se fait uniquement via votre praticien (orthophoniste ou kinesitherapeute). Demandez-lui votre code lors de votre prochaine seance — il vous le transmettra en 30 secondes.
+              </p>
             </div>
           )}
 

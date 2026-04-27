@@ -51,6 +51,7 @@ export default function TherapistDashboardClient() {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'slipping' | 'inactive'>('all');
   const [hasMessages, setHasMessages] = useState(false);
+  const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -64,6 +65,12 @@ export default function TherapistDashboardClient() {
           .eq('id', user.id)
           .single();
         setProfile(prof);
+        // Calculer les jours restants du trial
+        if (prof?.subscription_status === 'trialing' && prof?.trial_ends_at) {
+          const endsAt = new Date(prof.trial_ends_at);
+          const daysLeft = Math.ceil((endsAt.getTime() - Date.now()) / 86400000);
+          setTrialDaysLeft(Math.max(0, daysLeft));
+        }
         loadData(user.id, supabase);
       }
     });
@@ -219,6 +226,40 @@ export default function TherapistDashboardClient() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8 lg:px-6">
+
+        {/* Banner trial — visible si trialing et < 14j restants */}
+        {trialDaysLeft !== null && trialDaysLeft <= 14 && (
+          <div className={`mb-6 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 ${
+            trialDaysLeft <= 3
+              ? 'bg-red-50 border border-red-200'
+              : trialDaysLeft <= 7
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-forest-50 border border-forest-200'
+          }`}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{trialDaysLeft <= 3 ? '⚠️' : '📅'}</span>
+              <div>
+                <p className={`text-sm font-semibold ${trialDaysLeft <= 3 ? 'text-red-800' : trialDaysLeft <= 7 ? 'text-amber-800' : 'text-forest-800'}`}>
+                  {trialDaysLeft === 0
+                    ? "Votre essai gratuit se termine aujourd'hui"
+                    : `Votre essai gratuit : ${trialDaysLeft} jour${trialDaysLeft > 1 ? 's' : ''} restant${trialDaysLeft > 1 ? 's' : ''}`}
+                </p>
+                <p className={`text-xs mt-0.5 ${trialDaysLeft <= 3 ? 'text-red-600' : 'text-forest-500'}`}>
+                  Activez votre abonnement pour conserver l&apos;accès à vos patients et leur programme.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/pricing"
+              className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-colors ${
+                trialDaysLeft <= 3 ? 'bg-red-600 hover:bg-red-700' : 'bg-forest-600 hover:bg-forest-700'
+              }`}
+            >
+              Activer mon abonnement →
+            </Link>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-12">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">

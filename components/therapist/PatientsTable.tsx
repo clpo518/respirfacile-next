@@ -125,15 +125,18 @@ export default function PatientsTable({ patients, onFilterChange, currentFilter 
                   {/* Programme prescrit */}
                   <td className="px-4 py-4">
                     {(patient.prescriptionsCount || 0) > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-forest-700 bg-forest-50 border border-forest-200 px-2 py-1 rounded-full">
+                      <Link
+                        href={`/therapist/patients/${patient.id}/program`}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-forest-700 bg-forest-50 border border-forest-200 px-2 py-1 rounded-full hover:bg-forest-100 transition-colors"
+                      >
                         💊 {patient.prescriptionsCount} exercice{(patient.prescriptionsCount || 0) > 1 ? 's' : ''}
-                      </span>
+                      </Link>
                     ) : (
                       <Link
                         href={`/therapist/patients/${patient.id}/program`}
-                        className="text-xs text-amber-600 hover:text-amber-800 font-medium underline"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded-full transition-colors shadow-sm"
                       >
-                        + Prescrire
+                        📋 Prescrire
                       </Link>
                     )}
                   </td>
@@ -146,9 +149,6 @@ export default function PatientsTable({ patients, onFilterChange, currentFilter 
                       </Link>
                       <Link href={`/therapist/patients/${patient.id}/messages`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Envoyer un message">
                         💬
-                      </Link>
-                      <Link href={`/therapist/patients/${patient.id}/program`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Prescrire">
-                        💊
                       </Link>
                       <Link href={`/therapist/patients/${patient.id}/notes`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Notes">
                         ✏️
