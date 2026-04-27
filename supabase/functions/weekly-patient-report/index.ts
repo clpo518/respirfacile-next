@@ -88,7 +88,7 @@ serve(async (req) => {
       if (sessionCount >= 3) return {
         emoji: '💪',
         title: 'Bonne régularité !',
-        body: 'La régularité, c'est la clé. Vous êtes sur la bonne voie.'
+        body: `La régularité, c'est la clé. Vous êtes sur la bonne voie.`
       }
       return {
         emoji: '🌱',
