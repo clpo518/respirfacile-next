@@ -255,65 +255,44 @@ export default async function PricingPage({ searchParams }: PricingPageProps) {
             </h2>
 
             <div className="space-y-4">
-              {/* FAQ Item 1 */}
-              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
-                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
-                  Mes patients doivent-ils payer ?
-                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </summary>
-                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
-                  <p>
-                    <strong>Non. Jamais.</strong> Vos patients accèdent complètement gratuitement via votre code Pro. Vous seul payez l'abonnement mensuel pour le cabinet. Vos patients n'entrent pas de carte bancaire.
-                  </p>
-                </div>
-              </details>
-
-              {/* FAQ Item 2 */}
-              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
-                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
-                  Que se passe-t-il si j'arrête mon abonnement ?
-                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </summary>
-                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
-                  <p>
-                    Vous pouvez annuler à tout moment, sans pénalité. Vos données restent accessibles pendant 60 jours après résiliation. Aucun engagement minimum.
-                  </p>
-                </div>
-              </details>
-
-              {/* FAQ Item 3 */}
-              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
-                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
-                  Puis-je tester avant de payer ?
-                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </summary>
-                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
-                  <p>
-                    <strong>Oui, complètement.</strong> 30 jours gratuits complets, sans carte bancaire. Vous entrez votre carte bancaire seulement si vous continuez au-delà. Vous pouvez tester tous les plans.
-                  </p>
-                </div>
-              </details>
-
-              {/* FAQ Item 4 */}
-              <details className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
-                <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors">
-                  Y a-t-il un engagement minimum ?
-                  <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </summary>
-                <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-5">
-                  <p>
-                    Non. Mensuel, sans engagement. Vous pouvez arrêter ou changer de plan n'importe quand, à la fin du mois.
-                  </p>
-                </div>
-              </details>
+              {[
+                {
+                  q: "Mes patients doivent-ils payer ou télécharger quelque chose ?",
+                  a: "Non et non. L'accès est entièrement gratuit pour eux — pas de carte bancaire, pas d'application à installer. Vous leur transmettez votre code Pro (email, SMS, ou à la consultation), ils s'inscrivent en 2 minutes depuis leur navigateur et peuvent commencer leurs exercices dans la foulée.",
+                },
+                {
+                  q: "Puis-je tester avant de m'engager ?",
+                  a: "Oui. 30 jours gratuits complets, sans carte bancaire à l'inscription. Vous créez votre espace, invitez vos premiers patients, prescrivez des programmes et voyez les résultats — avant de décider. La carte bancaire n'est demandée qu'à la fin du trial, si vous continuez.",
+                },
+                {
+                  q: "Combien de temps faut-il pour mettre en place Respirfacile avec un patient ?",
+                  a: "Moins de 5 minutes pour la mise en place : vous copiez votre code Pro, le transmettez au patient, il s'inscrit et vous le retrouvez dans votre tableau de bord. Prescrire un programme prend 2 minutes supplémentaires. Après ça, l'application fait le travail entre les séances.",
+                },
+                {
+                  q: "Est-ce compatible avec les appareils CPAP et les orthèses ?",
+                  a: "Oui. Respirfacile n'est pas concurrent de ces traitements — il les complète. La rééducation myofonctionnelle améliore le tonus des muscles oropharyngés, ce qui renforce l'efficacité des appareils existants. Plusieurs études montrent une réduction de l'IAH significative lorsque les deux approches sont combinées.",
+                },
+                {
+                  q: "Y a-t-il un engagement de durée ?",
+                  a: "Non. Mensuel, sans engagement minimum. Vous changez de plan ou annulez à la fin du mois courant, sans pénalité. Si vous annulez, les données de vos patients restent accessibles 60 jours — le temps de les exporter ou de les transférer si besoin.",
+                },
+                {
+                  q: "Mes données et celles de mes patients sont-elles protégées ?",
+                  a: "Oui. Hébergement en Europe, chiffrement en transit et au repos, accès strictement limité praticien/patient, conformité RGPD complète. Vos données ne sont jamais partagées avec des tiers ni utilisées à des fins commerciales. En cas d'audit, nous pouvons fournir notre documentation de conformité.",
+                },
+              ].map(({ q, a }) => (
+                <details key={q} className="group bg-beige-100 rounded-2xl border border-beige-300 overflow-hidden cursor-pointer">
+                  <summary className="flex items-center justify-between p-5 font-medium text-forest-800 hover:bg-beige-200/50 transition-colors list-none">
+                    {q}
+                    <svg className="w-5 h-5 text-forest-500 group-open:rotate-180 transition-transform flex-shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div className="px-5 pb-5 text-sm text-forest-600 border-t border-beige-300 pt-4 leading-relaxed">
+                    {a}
+                  </div>
+                </details>
+              ))}
             </div>
           </div>
         </section>

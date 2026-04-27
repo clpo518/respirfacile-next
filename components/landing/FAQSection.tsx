@@ -3,32 +3,36 @@ import { useState } from "react"
 
 const FAQS = [
   {
-    q: "C'est quoi exactement Respirfacile ?",
-    a: "Respirfacile est une application qui vous guide dans des exercices de respiration quotidiens pour réduire les ronflements et les apnées du sommeil. Pensez-y comme un coach respiratoire dans votre poche — vous suivez les instructions, l'application enregistre vos progrès, votre praticien suit votre évolution.",
+    q: "À qui s'adresse Respirfacile ?",
+    a: "Aux patients suivis par un orthophoniste ou un kinésithérapeute pour des troubles respiratoires du sommeil (ronflements, apnées légères à modérées, respiration buccale, SAOS). L'accès se fait via le praticien — c'est lui qui vous donne votre code d'entrée.",
   },
   {
-    q: "Est-ce que ça fonctionne vraiment ?",
-    a: "Oui. Des études cliniques montrent qu'une rééducation régulière de la respiration réduit les apnées du sommeil de 50% en moyenne pour les formes légères à modérées. Respirfacile est conçu pour vous aider à être régulier — c'est la clé des résultats.",
+    q: "Est-ce que ça marche vraiment ?",
+    a: "Oui, à condition d'être régulier. Des études cliniques montrent qu'une rééducation myofonctionnelle réduit les apnées du sommeil de 50 % en moyenne sur les formes légères à modérées. Respirfacile est conçu pour que vous ne décrochiez pas — c'est là que tout se joue.",
   },
   {
-    q: "Combien de temps faut-il y passer chaque jour ?",
-    a: "15 à 20 minutes par jour suffisent. Pas plus. Au-delà, les bénéfices ne s'accumulent pas. L'application vous guide et s'arrête automatiquement au bon moment.",
+    q: "Combien de temps par jour ?",
+    a: "15 minutes suffisent. Ni plus, ni moins. Au-delà, les bénéfices plafonnent et la fatigue musculaire peut s'installer. L'application vous guide, chronomètre et s'arrête au bon moment.",
   },
   {
-    q: "Est-ce que je dois payer quelque chose ?",
-    a: "Non. Si votre orthophoniste ou kinésithérapeute vous donne un code d'accès, vous accédez gratuitement à l'application. C'est votre praticien qui règle l'abonnement.",
+    q: "Je dois payer quelque chose ?",
+    a: "Non. L'accès est entièrement gratuit pour le patient. C'est votre praticien qui souscrit l'abonnement pour son cabinet. Vous n'entrez jamais votre carte bancaire.",
   },
   {
-    q: "Mes données sont-elles confidentielles ?",
-    a: "Oui. Vos données sont hébergées en Europe, chiffrées et accessibles uniquement par vous et votre praticien. Conformité totale avec le RGPD.",
+    q: "Ça remplace mon traitement actuel (CPAP, orthèse) ?",
+    a: "Non — et ce n'est pas l'objectif. Les exercices sont un complément thérapeutique prescrit par votre praticien. Ils renforcent les muscles des voies aériennes supérieures, ce qui améliore l'efficacité des traitements existants sur le long terme.",
   },
   {
-    q: "Je peux arrêter quand je veux ?",
-    a: "Bien sûr. Aucun engagement. Et si votre praticien arrête son abonnement, vos données restent accessibles 60 jours.",
+    q: "Mes données médicales sont-elles protégées ?",
+    a: "Oui. Hébergement en Europe, chiffrement de bout en bout, accès strictement limité à vous et à votre praticien. Conformité RGPD complète. Vos données ne sont jamais vendues ni utilisées à des fins commerciales.",
   },
   {
-    q: "Pour qui est-ce fait ?",
-    a: "Pour toute personne qui ronfle, qui se réveille fatiguée, qui respire par la bouche, ou qui suit un traitement pour les apnées du sommeil. Si un médecin ou spécialiste vous a conseillé des exercices de respiration, Respirfacile est fait pour vous.",
+    q: "Et si mon praticien arrête l'abonnement ?",
+    a: "Vos données restent accessibles pendant 60 jours après la fin de l'abonnement. Aucune donnée n'est supprimée immédiatement — vous avez le temps d'en faire une copie si besoin.",
+  },
+  {
+    q: "Je suis praticien — mes patients doivent télécharger une application ?",
+    a: "Non. Respirfacile est une application web : vos patients y accèdent depuis n'importe quel navigateur, sans installation. Vous générez un code Pro en 30 secondes, vous le transmettez, et ils sont opérationnels dès leur première connexion.",
   },
 ]
 

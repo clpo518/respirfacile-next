@@ -9,36 +9,40 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
-    q: "Puis-je faire les exercices si j'ai un rhume ?",
-    a: "Oui, mais allez-y doucement. Si vous êtes très congestionné, évitez les exercices de rétention de souffle. La respiration rythmée et les exercices de bouche restent tout à fait adaptés.",
-  },
-  {
-    q: "Combien de temps avant de voir des résultats ?",
-    a: "La plupart des personnes remarquent une amélioration du sommeil et une réduction du ronflement après 2 à 4 semaines de pratique régulière. La régularité est la clé — même 10 minutes par jour font une vraie différence.",
-  },
-  {
-    q: "Je dors avec un appareil la nuit. Est-ce que je dois quand même faire les exercices ?",
-    a: "Oui, et c'est même très recommandé ! Les exercices renforcent les muscles de votre gorge et de votre bouche, ce qui améliore l'efficacité de votre appareil sur le long terme. Les deux se complètent.",
-  },
-  {
-    q: "Que faire si une séance me rend fatigué(e) ?",
-    a: "C'est tout à fait normal les premiers jours — vos muscles travaillent. Réduisez la durée à 5-10 minutes et augmentez progressivement. Si la fatigue persiste, signalez-le à votre praticien.",
-  },
-  {
-    q: "Puis-je faire les exercices le soir avant de dormir ?",
-    a: "Oui, c'est même le meilleur moment ! Les exercices de respiration rythmée et l'exercice de langue sont particulièrement efficaces 30 minutes avant le coucher.",
-  },
-  {
-    q: "Y a-t-il des situations où il vaut mieux ne pas pratiquer ?",
-    a: "Si vous avez de l'asthme sévère, des problèmes cardiaques, ou si vous êtes enceinte, parlez-en d'abord à votre médecin ou à votre praticien avant de commencer. En cas de doute, demandez conseil.",
-  },
-  {
-    q: "Puis-je faire les exercices au travail ou dans les transports ?",
-    a: "Tout à fait ! La respiration rythmée et l'exercice de langue sont invisibles — vous pouvez les pratiquer assis à votre bureau ou dans les transports sans que personne ne s'en aperçoive.",
+    q: "Combien de temps avant de voir une différence ?",
+    a: "La plupart des patients remarquent une amélioration du sommeil et une réduction du ronflement après 2 à 4 semaines de pratique quotidienne. Le score de Pause Contrôlée, lui, progresse souvent dès la première semaine — c'est votre premier indicateur concret.",
   },
   {
     q: "Je n'ai que 5 minutes par jour. Est-ce suffisant ?",
-    a: "5 minutes chaque jour vaut bien mieux qu'une heure le week-end. Commencez par la respiration rythmée (5 min) et ajoutez progressivement d'autres exercices. La régularité prime toujours sur la durée.",
+    a: "Oui. 5 minutes chaque jour valent bien mieux qu'une heure le week-end. Commencez par un seul exercice (la cohérence cardiaque ou la Pause Contrôlée), faites-le bien, et ajoutez-en un deuxième quand ça devient automatique. La régularité prime toujours sur la durée.",
+  },
+  {
+    q: "Puis-je faire les exercices si j'ai un rhume ou le nez bouché ?",
+    a: "Oui, mais adaptez. Si vous êtes très congestionné, évitez les exercices de rétention de souffle — ils peuvent être inconfortables. La cohérence cardiaque (respiration rythmée) et les exercices de bouche et de langue restent tout à fait adaptés.",
+  },
+  {
+    q: "Je dors avec un appareil CPAP ou une orthèse. Dois-je quand même faire les exercices ?",
+    a: "Oui, et c'est particulièrement recommandé dans votre cas. Les exercices renforcent les muscles des voies aériennes supérieures — langue, gorge, lèvres — ce qui améliore l'efficacité de votre appareil sur le long terme et peut permettre d'en réduire la pression progressivement. Votre praticien suit cette évolution.",
+  },
+  {
+    q: "Une séance me rend fatigué(e). C'est normal ?",
+    a: "Oui, surtout les premiers jours. C'est le signe que vos muscles travaillent — comme après une séance de sport pour un muscle peu sollicité. Réduisez à 5-10 minutes et augmentez progressivement. Si la fatigue persiste au-delà d'une semaine, signalez-le à votre praticien : il ajustera votre programme.",
+  },
+  {
+    q: "Quel est le meilleur moment de la journée pour pratiquer ?",
+    a: "Les exercices de langue et de respiration rythmée sont particulièrement efficaces le soir, 30 minutes avant le coucher — ils préparent les voies aériennes et facilitent l'endormissement. La Pause Contrôlée fonctionne mieux le matin ou en dehors des repas. En pratique : le meilleur moment est celui que vous tenez dans la durée.",
+  },
+  {
+    q: "Puis-je pratiquer au travail ou dans les transports ?",
+    a: "Tout à fait. La cohérence cardiaque et les exercices de langue sont invisibles — vous pouvez les faire assis à votre bureau, dans le train ou en salle d'attente. Personne ne remarque rien. Seule la Pause Contrôlée (qui implique de marcher en apnée) nécessite un peu d'espace.",
+  },
+  {
+    q: "Y a-t-il des situations où il vaut mieux ne pas pratiquer ?",
+    a: "Si vous avez de l'asthme sévère non contrôlé, des troubles cardiaques, ou si vous êtes enceinte, parlez-en d'abord à votre médecin avant de commencer les exercices de rétention de souffle. Les exercices de langue et de respiration rythmée restent généralement sans contre-indication. En cas de doute, demandez directement à votre praticien.",
+  },
+  {
+    q: "Mon score de Pause Contrôlée varie d'un jour à l'autre. Est-ce que ça signifie que je régresse ?",
+    a: "Non. La variation quotidienne est normale — le stress, la fatigue, un repas récent ou une légère maladie influencent le score. Ce qui compte, c'est la tendance sur 1 à 2 semaines. C'est pour ça que le graphique de progression affiche la courbe sur 30 jours, pas la valeur du jour.",
   },
 ];
 
@@ -46,22 +50,22 @@ const explainers = [
   {
     icon: "😴",
     title: "Pourquoi est-ce que je ronfle ou j'ai des apnées ?",
-    content: "Pendant le sommeil, les muscles de la gorge se relâchent et rétrécissent les voies respiratoires. L'air passe difficilement, ce qui provoque des ronflements — ou s'arrête complètement (apnée). Le résultat : un sommeil moins récupérateur, de la fatigue et souvent des maux de tête le matin.",
+    content: "Pendant le sommeil, les muscles de la gorge perdent leur tonus et rétrécissent les voies respiratoires. L'air passe difficilement — c'est le ronflement. Quand il s'arrête complètement quelques secondes, c'est une apnée. Résultat : votre cerveau sort du sommeil profond pour relancer la respiration, des dizaines de fois par nuit parfois. D'où la fatigue au réveil, même après 8 heures.",
   },
   {
     icon: "👃",
-    title: "Pourquoi respirer par le nez et non par la bouche ?",
-    content: "Le nez filtre, humidifie et réchauffe l'air avant qu'il arrive dans vos poumons. Il produit aussi une substance qui détend naturellement les vaisseaux sanguins. Respirer par la bouche court-circuite tous ces mécanismes et aggrave les troubles du sommeil.",
+    title: "Pourquoi est-ce si important de respirer par le nez ?",
+    content: "Le nez filtre, réchauffe et humidifie l'air avant qu'il atteigne vos poumons. Il produit aussi de l'oxyde nitrique, une substance qui dilate naturellement les vaisseaux et améliore l'oxygénation. Respirer par la bouche — surtout la nuit — court-circuite tous ces mécanismes, assèche les voies respiratoires, et aggrave les troubles du sommeil. C'est souvent le premier réflexe à corriger.",
   },
   {
     icon: "🫁",
-    title: "C'est quoi la « pause contrôlée » ?",
-    content: "C'est un exercice simple : vous expirez doucement, puis vous retenez votre souffle aussi longtemps que vous le pouvez confortablement. Le nombre de secondes (ou de pas si vous marchez) mesure votre tolérance. Plus ce score augmente, mieux vous respirez — même pendant votre sommeil.",
+    title: "C'est quoi la Pause Contrôlée, et pourquoi on la mesure en pas ?",
+    content: "La Pause Contrôlée mesure votre tolérance au CO₂ : vous expirez doucement, pincez le nez, puis vous marchez jusqu'au premier signal d'inconfort. Le nombre de pas — pas les secondes — est votre score. En marchant, vous consommez du CO₂ à un rythme constant, ce qui rend la mesure reproductible. Plus votre score monte, mieux votre corps tolère le CO₂, et mieux vous respirez même pendant le sommeil.",
   },
   {
     icon: "💪",
-    title: "À quoi servent les exercices de bouche et de langue ?",
-    content: "Votre langue, vos lèvres et les muscles de votre gorge peuvent être renforcés, comme n'importe quel muscle. Des muscles plus toniques maintiennent les voies respiratoires ouvertes pendant le sommeil, ce qui réduit les ronflements et les apnées. Votre praticien a choisi ces exercices spécifiquement pour vous.",
+    title: "À quoi servent les exercices de langue et de gorge ?",
+    content: "La langue, les lèvres, le palais mou et les muscles pharyngés peuvent être renforcés par l'exercice — exactement comme un muscle du bras. Des études montrent que des muscles oropharyngés plus toniques réduisent les ronflements et les apnées en maintenant les voies aériennes ouvertes pendant le sommeil. Votre praticien a sélectionné les exercices adaptés à votre profil — ce n'est pas du hasard.",
   },
 ];
 
