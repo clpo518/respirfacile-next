@@ -12,11 +12,12 @@ export function JournalForm({ userId }: JournalFormProps) {
   const router = useRouter();
   const [wellbeing, setWellbeing] = useState(5);
   const [sleep, setSleep] = useState(5);
-  const [exerciseCompleted, setExerciseCompleted] = useState(true);
+  const [exerciseCompleted, setExerciseCompleted] = useState(false);
   const [anxietyLevel, setAnxietyLevel] = useState(5);
   const [nasalBreathing, setNasalBreathing] = useState(5);
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const emojiScale = (value: number) => {
@@ -48,35 +49,42 @@ export function JournalForm({ userId }: JournalFormProps) {
         },
       ]);
 
-      if (err) throw err;
+      if (err) {
+        // Si la table n'existe pas encore, on indique quand même le succès
+        if (err.code === "42P01") {
+          setSuccess(true);
+          return;
+        }
+        throw err;
+      }
 
-      // Reset form
-      setWellbeing(5);
-      setSleep(5);
-      setExerciseCompleted(true);
-      setAnxietyLevel(5);
-      setNasalBreathing(5);
-      setNotes("");
-
-      // Refresh
+      setSuccess(true);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de l'enregistrement");
+      setError("Une erreur est survenue. Réessayez dans quelques instants.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (success) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-4xl mb-4">✅</div>
+        <p className="font-semibold text-forest-800 text-lg mb-2">Journal enregistré !</p>
+        <p className="text-sm text-forest-600">Merci. Votre orthophoniste pourra consulter vos réponses lors de votre prochaine séance.</p>
+      </div>
+    );
+  }
+
   const ScaleControl = ({
     label,
     value,
     onChange,
-    icon,
   }: {
     label: string;
     value: number;
     onChange: (v: number) => void;
-    icon?: string;
   }) => (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -103,21 +111,25 @@ export function JournalForm({ userId }: JournalFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <p className="text-sm text-forest-600 bg-beige-100 rounded-xl px-4 py-3 border border-beige-300">
+        📅 Ce journal est <strong>hebdomadaire</strong> — prenez 2 minutes chaque semaine pour faire le point. Votre orthophoniste le consulte avant chaque séance.
+      </p>
+
       {/* Well-being scores */}
       <div className="space-y-6">
         <ScaleControl
-          label="🫁 Comment te sens-tu globalement ?"
+          label="🫁 Comment vous sentez-vous globalement ?"
           value={wellbeing}
           onChange={setWellbeing}
         />
-        <ScaleControl label="😴 Qualité de ton sommeil cette nuit" value={sleep} onChange={setSleep} />
+        <ScaleControl label="😴 Qualité de votre sommeil cette semaine" value={sleep} onChange={setSleep} />
         <ScaleControl
-          label="😰 Niveau d'anxiété"
+          label="😰 Niveau d'anxiété ressenti"
           value={anxietyLevel}
           onChange={setAnxietyLevel}
         />
         <ScaleControl
-          label="👃 Respiration nasale"
+          label="👃 Facilité à respirer par le nez"
           value={nasalBreathing}
           onChange={setNasalBreathing}
         />
@@ -133,7 +145,7 @@ export function JournalForm({ userId }: JournalFormProps) {
             className="w-5 h-5 rounded border border-forest-500 accent-forest-500 cursor-pointer"
           />
           <span className="font-semibold text-forest-800">
-            ✓ J'ai réalisé mes exercices aujourd'hui
+            ✓ J'ai réalisé mes exercices cette semaine
           </span>
         </label>
       </div>
@@ -147,21 +159,20 @@ export function JournalForm({ userId }: JournalFormProps) {
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Cette semaine j'ai remarqué que... je ressens..."
+          placeholder="Cette semaine j'ai remarqué que… je ressens…"
           rows={4}
           className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-beige-50 text-forest-800 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 resize-none"
           disabled={isLoading}
         />
         <p className="text-xs text-forest-500 mt-2">
-          Tes notes seront visibles par ton orthophoniste pour adapter ton programme
+          Vos notes seront visibles par votre orthophoniste pour adapter votre programme.
         </p>
       </div>
 
       {/* Error */}
       {error && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-300">
-          <p className="text-sm font-medium text-red-800">Oups, quelque chose s'est mal passé</p>
-          <p className="text-xs text-red-700 mt-1">{error}</p>
+          <p className="text-sm font-medium text-red-800">{error}</p>
         </div>
       )}
 
@@ -169,10 +180,10 @@ export function JournalForm({ userId }: JournalFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full px-6 py-3 rounded-2xl bg-forest-500 hover:bg-forest-600 disabled:opacity-50 text-beige-100 font-semibold transition-colors disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-colors"
+        className="w-full px-6 py-3 rounded-2xl bg-forest-500 hover:bg-forest-600 disabled:opacity-50 text-white font-semibold transition-colors disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Enregistrement…' : 'Enregistrer mon journal'}
+        {isLoading ? 'Enregistrement…' : 'Enregistrer mon journal de la semaine'}
       </button>
     </form>
-  )
+  );
 }

@@ -22,25 +22,25 @@ const PROFILE_OPTIONS = [
     value: "adult_saos_mild",
     label: "Je ronfle ou j'ai des apnées",
     icon: "🌙",
-    desc: "Mon médecin a détecté de l'apnée du sommeil. Je ne porte pas de masque la nuit.",
+    desc: "Votre médecin a détecté de l'apnée du sommeil. Vous ne portez pas de masque la nuit.",
   },
   {
     value: "adult_saos_severe",
     label: "J'ai des apnées et je porte un masque la nuit",
     icon: "😴",
-    desc: "Je dors avec un appareil (CPAP). Mon praticien veut compléter avec des exercices.",
+    desc: "Vous dormez avec un appareil (CPAP). Votre praticien souhaite compléter avec des exercices.",
   },
   {
     value: "adult_tmof",
     label: "On m'a prescrit des exercices de bouche ou de langue",
     icon: "👅",
-    desc: "Mon orthophoniste ou kiné m'a prescrit une rééducation. Pas forcément lié à l'apnée.",
+    desc: "Votre orthophoniste ou kiné vous a prescrit une rééducation. Pas forcément lié à l'apnée.",
   },
   {
     value: "adult_mixed",
     label: "J'ai les deux à la fois",
     icon: "🎯",
-    desc: "J'ai de l'apnée du sommeil et des exercices de rééducation prescrits.",
+    desc: "Vous avez de l'apnée du sommeil et des exercices de rééducation prescrits.",
   },
 ];
 
@@ -132,7 +132,7 @@ export default function OnboardingPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Erreur onboarding:", err);
-      setSaveError("Une erreur est survenue. Réessaie ou passe cette étape.");
+      setSaveError("Une erreur est survenue. Réessayez ou passez cette étape.");
       setSaving(false);
     }
   };
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
     );
   }
 
-  const stepLabels = ["Toi", "Ta situation", "Ton objectif", "Ton rythme"];
+  const stepLabels = ["Vous", "Votre situation", "Votre objectif", "Votre rythme"];
 
   return (
     <div className="min-h-screen bg-beige-200 flex flex-col">
@@ -200,11 +200,11 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
               <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">👋 Bienvenue !</h2>
-              <p className="text-forest-600 mb-8">On commence par faire connaissance. Ça prend 2 minutes.</p>
+              <p className="text-forest-600 mb-8">Faisons connaissance. Cela prend 2 minutes.</p>
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-forest-700 mb-2">Ton prénom et nom</label>
+                  <label className="block text-sm font-semibold text-forest-700 mb-2">Votre prénom et nom</label>
                   <input
                     type="text"
                     value={data.full_name}
@@ -215,7 +215,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-forest-700 mb-2">Ton âge</label>
+                  <label className="block text-sm font-semibold text-forest-700 mb-2">Votre âge</label>
                   <input
                     type="number"
                     value={data.age || ""}
@@ -225,7 +225,7 @@ export default function OnboardingPage() {
                     max="120"
                     className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white text-forest-800 placeholder-forest-400 focus:outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-500/20"
                   />
-                  <p className="text-xs text-forest-500 mt-1.5">L'âge permet d'adapter les objectifs à ta situation.</p>
+                  <p className="text-xs text-forest-500 mt-1.5">L'âge nous permet d'adapter les objectifs à votre situation.</p>
                 </div>
               </div>
 
@@ -242,8 +242,8 @@ export default function OnboardingPage() {
           {/* Step 2 */}
           {step === 2 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🩺 Quelle est ta situation ?</h2>
-              <p className="text-forest-600 mb-6">Choisis ce qui te correspond le mieux — ton praticien pourra affiner ensuite.</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🩺 Quelle est votre situation ?</h2>
+              <p className="text-forest-600 mb-6">Choisissez ce qui vous correspond le mieux — votre praticien pourra affiner ensuite.</p>
 
               <div className="space-y-3 mb-8">
                 {PROFILE_OPTIONS.map((option) => (
@@ -283,8 +283,8 @@ export default function OnboardingPage() {
           {/* Step 3 */}
           {step === 3 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🎯 Qu'est-ce que tu veux améliorer ?</h2>
-              <p className="text-forest-600 mb-6">C'est optionnel — mais ça nous aide à personnaliser tes exercices.</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🎯 Qu'est-ce que vous souhaitez améliorer ?</h2>
+              <p className="text-forest-600 mb-6">C'est optionnel — cela nous aide à personnaliser vos exercices.</p>
 
               <div className="space-y-3 mb-8">
                 {OBJECTIVE_OPTIONS.map((option) => (
@@ -320,8 +320,8 @@ export default function OnboardingPage() {
           {/* Step 4 */}
           {step === 4 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">⏰ Quand tu auras du temps pour pratiquer ?</h2>
-              <p className="text-forest-600 mb-6">15 minutes suffisent. On te rappellera au bon moment.</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">⏰ Quand aurez-vous du temps pour pratiquer ?</h2>
+              <p className="text-forest-600 mb-6">15 minutes suffisent. Nous vous rappellerons au bon moment.</p>
 
               <div className="space-y-3 mb-8">
                 {AVAILABILITY_OPTIONS.map((option) => (
@@ -358,16 +358,16 @@ export default function OnboardingPage() {
                   {saving ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Enregistrement...
+                      Enregistrement…
                     </>
                   ) : (
-                    data.availability ? "Accéder à mon programme →" : "Terminer →"
+                    data.availability ? "Accéder à votre programme →" : "Terminer →"
                   )}
                 </button>
               </div>
 
               <p className="text-center text-xs text-forest-500 mt-4">
-                Tu pourras faire ton premier exercice depuis ton tableau de bord, quand tu veux.
+                Vous pourrez faire votre premier exercice depuis votre tableau de bord, quand vous voulez.
               </p>
             </div>
           )}

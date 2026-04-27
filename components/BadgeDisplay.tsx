@@ -20,49 +20,49 @@ const ALL_BADGES: Badge[] = [
     id: "first_session",
     name: "Premier souffle",
     emoji: "🌟",
-    description: "1ère séance complétée",
+    description: "Complétez votre 1ère séance d'exercice.",
     earned: false,
   },
   {
     id: "week_1",
-    name: "Semaine 1",
+    name: "7 jours de pratique",
     emoji: "📅",
-    description: "7 jours d'affilée",
+    description: "Pratiquez au moins une fois par jour pendant 7 jours consécutifs.",
     earned: false,
   },
   {
     id: "pause_20",
-    name: "Pause 20s",
+    name: "Pause 20 secondes",
     emoji: "⏸️",
-    description: "20 secondes de pause",
+    description: "Tenez 20 secondes de pause contrôlée lors d'une séance.",
     earned: false,
   },
   {
     id: "pause_25",
-    name: "Pause 25s",
+    name: "Pause 25 secondes",
     emoji: "🏆",
-    description: "25 secondes de pause",
+    description: "Tenez 25 secondes de pause contrôlée — niveau avancé.",
     earned: false,
   },
   {
     id: "nasale_master",
     name: "Nez libre",
     emoji: "👃",
-    description: "10 séances nasales",
+    description: "Complétez 10 séances de respiration nasale.",
     earned: false,
   },
   {
     id: "coherence_30",
-    name: "Rythme parfait",
+    name: "Rythme régulier",
     emoji: "💓",
-    description: "30 sessions cohérence",
+    description: "Complétez 30 séances de cohérence cardiaque.",
     earned: false,
   },
   {
     id: "month_1",
-    name: "1 mois",
+    name: "1 mois ensemble",
     emoji: "🎖️",
-    description: "30 jours d'engagement",
+    description: "Pratiquez pendant 30 jours au total depuis votre inscription.",
     earned: false,
   },
 ];
@@ -166,7 +166,7 @@ export function BadgeDisplay({ userBadges }: BadgeDisplayProps) {
       {/* Si aucun badge */}
       {badgesWithStatus.length === 0 && (
         <div className="text-center py-8 text-forest-500">
-          <p className="text-sm">🏅 Chaque exercice complété t'en rapproche. À bientôt, premier badge !</p>
+          <p className="text-sm">🏅 Chaque exercice complété vous en rapproche. À bientôt, premier badge !</p>
         </div>
       )}
     </div>

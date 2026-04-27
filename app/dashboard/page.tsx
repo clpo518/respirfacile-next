@@ -42,7 +42,7 @@ export default async function DashboardPage({
     hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
 
   // Patient dashboard — server rendered
-  const firstName = profile?.full_name?.split(" ")[0] || "vous";
+  const firstName = profile?.full_name?.split(" ")[0] || "";
 
   return (
     <div className="min-h-screen bg-beige-200 bg-texture">
@@ -100,20 +100,20 @@ export default async function DashboardPage({
         {/* Greeting dynamique */}
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-forest-800 mb-1">
-            👋 {greeting}, {firstName}
+            👋 {greeting}{firstName ? `, ${firstName}` : ""}
           </h1>
           <p className="text-forest-500">
             {hour < 12
-              ? "Comment ça va ce matin ?"
+              ? "Comment allez-vous ce matin ?"
               : hour < 18
-                ? "Prêt pour une séance ?"
-                : "Finis bien ta journée"}
+                ? "Prêt(e) pour une séance ?"
+                : "Bonne fin de journée."}
           </p>
         </div>
 
         {/* Mood Ring */}
         <div className="mb-6">
-          <MoodRing compact />
+          <MoodRing compact userId={user.id} />
         </div>
 
         {/* Daily Tip */}
@@ -203,32 +203,68 @@ export default async function DashboardPage({
           ))}
         </div>
 
-        {/* Exercises */}
+        {/* Programme recommandé */}
         <div className="bg-beige-100 rounded-3xl border border-beige-300 p-8 shadow-beige mb-8">
-          <h2 className="font-semibold text-xl text-forest-800 mb-6">
-            🏋️ Mon programme
-          </h2>
-          <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-full bg-forest-500/10 border border-forest-500/20 flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-forest-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.5"
+          <h2 className="font-semibold text-xl text-forest-800 mb-2">🗓️ Votre programme de la semaine</h2>
+          <p className="text-sm text-forest-500 mb-6">15 minutes par jour suffisent. La régularité compte plus que la durée.</p>
+          <div className="space-y-3">
+            {[
+              {
+                icon: "🫁",
+                name: "Cohérence cardiaque",
+                freq: "3× par jour",
+                duration: "5 min",
+                desc: "Inspirez 5 sec, expirez 5 sec. Idéal le matin, après le repas, et avant de dormir.",
+                href: "/exercises",
+              },
+              {
+                icon: "⏸️",
+                name: "Pause contrôlée",
+                freq: "1× par jour",
+                duration: "5–10 min",
+                desc: "Mesurez votre tolérance au CO₂. Votre score progresse semaine après semaine.",
+                href: "/exercises",
+              },
+              {
+                icon: "👅",
+                name: "Langue au palais",
+                freq: "2× par jour",
+                duration: "2 min",
+                desc: "Maintenez la pointe de la langue contre le palais. Peut se faire n'importe où.",
+                href: "/exercises",
+              },
+              {
+                icon: "👃",
+                name: "Respiration nasale",
+                freq: "1× par jour",
+                duration: "3 min",
+                desc: "Marchez en respirant uniquement par le nez. Ralentissez si nécessaire.",
+                href: "/exercises",
+              },
+            ].map((ex) => (
+              <a
+                key={ex.name}
+                href={ex.href}
+                className="flex items-start gap-4 p-4 rounded-2xl border border-beige-300 bg-white hover:border-forest-300 hover:shadow-sm transition-all group"
               >
-                <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round" />
-                <path d="M12 8v8M9 11h6" strokeLinecap="round" />
-              </svg>
-            </div>
-            <p className="font-semibold text-forest-700 mb-2">
-              Ton programme arrive bientôt
-            </p>
-            <p className="text-sm text-forest-500 max-w-xs mx-auto leading-relaxed">
-              Ton orthophoniste finit de mettre en place ton programme
-              personnalisé. Tu recevras une notification dès qu'il sera prêt.
-            </p>
+                <span className="text-2xl flex-shrink-0 mt-0.5">{ex.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-semibold text-forest-800">{ex.name}</p>
+                    <span className="text-xs bg-forest-500/10 text-forest-700 px-2 py-0.5 rounded-full font-medium">{ex.freq}</span>
+                    <span className="text-xs text-forest-500">{ex.duration}</span>
+                  </div>
+                  <p className="text-sm text-forest-600 mt-0.5 leading-relaxed">{ex.desc}</p>
+                </div>
+                <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 flex-shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            ))}
           </div>
+          <p className="text-xs text-forest-400 mt-4 text-center">
+            Votre orthophoniste peut ajuster ce programme à tout moment depuis son tableau de bord.
+          </p>
         </div>
 
         {/* Dashboard Shortcuts */}
