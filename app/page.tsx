@@ -58,7 +58,7 @@ export default function HomePage() {
                       <span className="text-xl flex-shrink-0 mt-0.5">{f.emoji}</span>
                       <div>
                         <p className="font-semibold text-beige-100 text-sm">{f.title}</p>
-                        <p className="text-sm text-forest-300 mt-0.5">{f.desc}</p>
+                        <p className="text-sm text-beige-300 mt-0.5">{f.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -84,7 +84,7 @@ export default function HomePage() {
               <h2 className="font-display text-4xl md:text-5xl font-bold text-beige-100 mb-4 text-balance">
                 Ce que disent les professionnels
               </h2>
-              <p className="text-forest-300 max-w-xl mx-auto">
+              <p className="text-beige-300 max-w-xl mx-auto">
                 85 orthophonistes utilisent deja Respirfacile avec leurs patients.
               </p>
             </div>

@@ -5,7 +5,7 @@ export function ProblemSection() {
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-copper-400 mb-3">Le problème que vous connaissez</p>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">La rééducation fonctionne.<br/>Sauf quand elle ne se fait pas.</h2>
-          <p className="text-xl text-beige-300 max-w-2xl mx-auto font-light">
+          <p className="text-xl text-beige-200 max-w-2xl mx-auto font-light">
             Vous prescrivez les bons exercices. Vos patients acquiescent. Et entre deux séances — rien. La motivation s'effondre, les progrès stagnent, et vous repartez de zéro.
           </p>
         </div>
@@ -33,10 +33,10 @@ export function ProblemSection() {
               desc: "\"Oui j'ai fait mes exercices\" — mais combien de fois ? Avec quelle régularité ? Sans données, impossible d'ajuster.",
             },
           ].map((item) => (
-            <div key={item.title} className="bg-beige-100/5 border border-white/10 rounded-3xl p-7 hover:bg-beige-100/8 transition-colors">
+            <div key={item.title} className="bg-forest-800 border border-forest-700 rounded-3xl p-7 hover:bg-forest-700 transition-colors">
               <div className="text-3xl mb-4">{item.emoji}</div>
-              <h3 className="font-bold text-lg mb-2 text-white">{item.title}</h3>
-              <p className="text-beige-300 text-sm leading-relaxed">{item.desc}</p>
+              <h3 className="font-bold text-lg mb-2 text-beige-100">{item.title}</h3>
+              <p className="text-beige-200 text-sm leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>

@@ -3,65 +3,65 @@ import { PatientNavbar } from "@/components/layout/PatientNavbar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ressources — Comprendre votre traitement",
-  description: "Tout ce que vous devez savoir sur la rééducation respiratoire, le SAOS et les exercices myofonctionnels.",
+  title: "Ressources — Vos questions, nos réponses",
+  description: "Tout ce que vous devez savoir pour pratiquer vos exercices avec confiance.",
 };
 
 const faqs = [
   {
     q: "Puis-je faire les exercices si j'ai un rhume ?",
-    a: "Oui, mais réduisez l'intensité. Évitez les exercices de pause contrôlée si vous êtes très congestionné. La cohérence cardiaque et les exercices myofonctionnels restent adaptés.",
+    a: "Oui, mais allez-y doucement. Si vous êtes très congestionné, évitez les exercices de rétention de souffle. La respiration rythmée et les exercices de bouche restent tout à fait adaptés.",
   },
   {
     q: "Combien de temps avant de voir des résultats ?",
-    a: "La plupart des patients constatent une amélioration du sommeil dès 2-3 semaines de pratique régulière. Les résultats sur les ronflements apparaissent généralement après 4-6 semaines.",
+    a: "La plupart des personnes remarquent une amélioration du sommeil et une réduction du ronflement après 2 à 4 semaines de pratique régulière. La régularité est la clé — même 10 minutes par jour font une vraie différence.",
   },
   {
-    q: "Dois-je arrêter mes exercices si j'utilise un CPAP ?",
-    a: "Non, au contraire ! Respirfacile est conçu comme complément au CPAP, pas en remplacement. La rééducation musculaire améliore l'efficacité du traitement sur le long terme.",
+    q: "Je dors avec un appareil la nuit. Est-ce que je dois quand même faire les exercices ?",
+    a: "Oui, et c'est même très recommandé ! Les exercices renforcent les muscles de votre gorge et de votre bouche, ce qui améliore l'efficacité de votre appareil sur le long terme. Les deux se complètent.",
   },
   {
     q: "Que faire si une séance me rend fatigué(e) ?",
-    a: "C'est normal au début — c'est un signe que vos muscles respiratoires travaillent. Réduisez la durée à 10 minutes et augmentez progressivement. Signalez-le à votre orthophoniste.",
+    a: "C'est tout à fait normal les premiers jours — vos muscles travaillent. Réduisez la durée à 5-10 minutes et augmentez progressivement. Si la fatigue persiste, signalez-le à votre praticien.",
   },
   {
     q: "Puis-je faire les exercices le soir avant de dormir ?",
-    a: "Oui, c'est même recommandé ! La cohérence cardiaque et la langue au palais sont particulièrement bénéfiques 30 minutes avant le coucher.",
+    a: "Oui, c'est même le meilleur moment ! Les exercices de respiration rythmée et l'exercice de langue sont particulièrement efficaces 30 minutes avant le coucher.",
   },
   {
-    q: "Y a-t-il des contre-indications ?",
-    a: "Consultez votre orthophoniste si vous souffrez d'asthme sévère, de troubles cardiaques ou si vous êtes enceinte. Certains exercices de pause contrôlée ne sont pas adaptés à toutes les situations.",
+    q: "Y a-t-il des situations où il vaut mieux ne pas pratiquer ?",
+    a: "Si vous avez de l'asthme sévère, des problèmes cardiaques, ou si vous êtes enceinte, parlez-en d'abord à votre médecin ou à votre praticien avant de commencer. En cas de doute, demandez conseil.",
   },
   {
-    q: "Puis-je faire les exercices au travail ?",
-    a: "Tout à fait ! La cohérence cardiaque et la langue au palais sont totalement discrets. Vous pouvez les pratiquer assis à votre bureau sans que personne ne s'en aperçoive.",
+    q: "Puis-je faire les exercices au travail ou dans les transports ?",
+    a: "Tout à fait ! La respiration rythmée et l'exercice de langue sont invisibles — vous pouvez les pratiquer assis à votre bureau ou dans les transports sans que personne ne s'en aperçoive.",
   },
   {
     q: "Je n'ai que 5 minutes par jour. Est-ce suffisant ?",
-    a: "5 minutes par jour de pratique régulière est bien meilleur qu'une heure par semaine. Commencez par la cohérence cardiaque (5 min) et augmentez progressivement. La régularité prime sur la durée.",
+    a: "5 minutes chaque jour vaut bien mieux qu'une heure le week-end. Commencez par la respiration rythmée (5 min) et ajoutez progressivement d'autres exercices. La régularité prime toujours sur la durée.",
   },
 ];
 
 const explainers = [
   {
     icon: "😴",
-    title: "Qu'est-ce que le SAOS ?",
-    content: "Le Syndrome d'Apnées Obstructives du Sommeil (SAOS) est une interruption répétée de la respiration pendant le sommeil. Elle est causée par un relâchement des muscles de la gorge qui obstrue les voies aériennes. Conséquences : ronflement, fatigue diurne, maux de tête matinaux.",
+    title: "Pourquoi est-ce que je ronfle ou j'ai des apnées ?",
+    content: "Pendant le sommeil, les muscles de la gorge se relâchent et rétrécissent les voies respiratoires. L'air passe difficilement, ce qui provoque des ronflements — ou s'arrête complètement (apnée). Le résultat : un sommeil moins récupérateur, de la fatigue et souvent des maux de tête le matin.",
   },
   {
     icon: "👃",
-    title: "Pourquoi la respiration nasale ?",
-    content: "Le nez filtre, humidifie et réchauffe l'air. Il produit aussi du monoxyde d'azote qui dilate les vaisseaux sanguins et améliore l'oxygénation. Respirer par la bouche court-circuite tous ces mécanismes et aggrave le SAOS.",
+    title: "Pourquoi respirer par le nez et non par la bouche ?",
+    content: "Le nez filtre, humidifie et réchauffe l'air avant qu'il arrive dans vos poumons. Il produit aussi une substance qui détend naturellement les vaisseaux sanguins. Respirer par la bouche court-circuite tous ces mécanismes et aggrave les troubles du sommeil.",
   },
   {
     icon: "🫁",
-    title: "Comment fonctionne la pause contrôlée ?",
-    content: "La pause contrôlée (ou test CO2) mesure votre tolérance au CO2. Un score faible indique une hyperventilation chronique. En pratiquant régulièrement, vous entraînez votre corps à mieux tolérer le CO2, ce qui améliore naturellement votre respiration.",
+    title: "C'est quoi la « pause contrôlée » ?",
+    content: "C'est un exercice simple : vous expirez doucement, puis vous retenez votre souffle aussi longtemps que vous le pouvez confortablement. Le nombre de secondes (ou de pas si vous marchez) mesure votre tolérance. Plus ce score augmente, mieux vous respirez — même pendant votre sommeil.",
   },
   {
-    icon: "💊",
-    title: "CPAP + rééducation : le duo gagnant",
-    content: "Le CPAP traite les symptômes (apnées pendant le sommeil). La rééducation myofonctionnelle renforce les muscles qui causent le problème. Combinés, ils offrent les meilleurs résultats à long terme — certains patients réduisent leur pression CPAP après 6 mois de rééducation.",
+    icon: "💪",
+    title: "À quoi servent les exercices de bouche et de langue ?",
+    content: "Votre langue, vos lèvres et les muscles de votre gorge peuvent être renforcés, comme n'importe quel muscle. Des muscles plus toniques maintiennent les voies respiratoires ouvertes pendant le sommeil, ce qui réduit les ronflements et les apnées. Votre praticien a choisi ces exercices spécifiquement pour vous.",
   },
 ];
 
@@ -69,20 +69,20 @@ export default function RessourcesPage() {
   return (
     <main className="min-h-screen bg-[#F5F0E8] pb-24 md:pb-0">
       <div className="bg-[#2D5016] text-white px-4 py-10 text-center">
-        <h1 className="text-3xl font-bold mb-2">Comprendre votre traitement 📚</h1>
-        <p className="text-white/80 max-w-xl mx-auto">Tout ce que vous devez savoir pour progresser avec confiance</p>
+        <h1 className="text-3xl font-bold mb-2">Vos questions, nos réponses 📚</h1>
+        <p className="text-white/80 max-w-xl mx-auto">Tout ce que vous devez savoir pour pratiquer avec confiance</p>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-10">
 
         <section>
-          <h2 className="text-xl font-bold text-stone-800 mb-4">🔬 Comprendre votre traitement</h2>
+          <h2 className="text-xl font-bold text-forest-800 mb-4">💡 Comprendre vos exercices</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {explainers.map((item) => (
               <div key={item.title} className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="text-3xl mb-3">{item.icon}</div>
-                <h3 className="font-semibold text-stone-800 mb-2">{item.title}</h3>
-                <p className="text-sm text-stone-600 leading-relaxed">{item.content}</p>
+                <h3 className="font-semibold text-forest-800 mb-2">{item.title}</h3>
+                <p className="text-sm text-forest-700 leading-relaxed">{item.content}</p>
               </div>
             ))}
           </div>
@@ -97,15 +97,15 @@ export default function RessourcesPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-stone-800 mb-4">❓ Questions fréquentes</h2>
+          <h2 className="text-xl font-bold text-forest-800 mb-4">❓ Questions fréquentes</h2>
           <div className="space-y-3">
             {faqs.map((faq) => (
               <details key={faq.q} className="bg-white rounded-2xl shadow-sm group">
-                <summary className="p-5 font-medium text-stone-800 cursor-pointer flex items-center justify-between list-none">
+                <summary className="p-5 font-medium text-forest-800 cursor-pointer flex items-center justify-between list-none">
                   {faq.q}
                   <span className="text-[#2D5016] text-xl group-open:rotate-45 transition-transform">+</span>
                 </summary>
-                <div className="px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-stone-100 pt-3">
+                <div className="px-5 pb-5 text-forest-700 text-sm leading-relaxed border-t border-beige-200 pt-3">
                   {faq.a}
                 </div>
               </details>
@@ -115,9 +115,9 @@ export default function RessourcesPage() {
 
         <section className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center">
           <p className="text-amber-800 font-medium">Une question spécifique à votre situation ?</p>
-          <p className="text-amber-700 text-sm mt-1">Contactez directement votre orthophoniste via votre espace patient.</p>
+          <p className="text-amber-700 text-sm mt-1">Votre orthophoniste ou kiné est la meilleure personne pour y répondre.</p>
           <Link href="/dashboard" className="mt-3 inline-block text-[#2D5016] font-medium underline text-sm">
-            Retour au tableau de bord
+            Retour à mon tableau de bord
           </Link>
         </section>
 
