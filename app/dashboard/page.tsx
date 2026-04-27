@@ -9,6 +9,7 @@ import { MoodRing } from "@/components/MoodRing";
 import { DashboardShortcuts } from "@/components/DashboardShortcuts";
 import { EXERCISES } from "@/lib/data/exercises";
 import CelebrationToast from "@/components/CelebrationToast";
+import Link from "next/link";
 
 export default async function DashboardPage({
   searchParams,
@@ -43,6 +44,21 @@ export default async function DashboardPage({
 
   // Patient dashboard — server rendered
   const firstName = profile?.full_name?.split(" ")[0] || "";
+
+  // Récupérer les prescriptions actives de l'ortho
+  const { data: prescriptions } = await supabase
+    .from("prescriptions")
+    .select("id, exercise_id, frequency_label, notes")
+    .eq("patient_id", user.id)
+    .eq("is_active", true);
+
+  // Matcher avec le catalogue d'exercices
+  const prescribedExercises = (prescriptions || [])
+    .map((p) => {
+      const ex = EXERCISES.find((e) => e.id === p.exercise_id);
+      return ex ? { ...ex, frequency_label: p.frequency_label, ortho_note: p.notes } : null;
+    })
+    .filter(Boolean) as Array<(typeof EXERCISES)[0] & { frequency_label: string; ortho_note: string | null }>;
 
   return (
     <div className="min-h-screen bg-beige-200 bg-texture">
@@ -203,68 +219,61 @@ export default async function DashboardPage({
           ))}
         </div>
 
-        {/* Programme recommandé */}
+        {/* Programme prescrit par l'ortho */}
         <div className="bg-beige-100 rounded-3xl border border-beige-300 p-8 shadow-beige mb-8">
           <h2 className="font-semibold text-xl text-forest-800 mb-2">🗓️ Votre programme de la semaine</h2>
-          <p className="text-sm text-forest-500 mb-6">15 minutes par jour suffisent. La régularité compte plus que la durée.</p>
-          <div className="space-y-3">
-            {[
-              {
-                icon: "🫁",
-                name: "Cohérence cardiaque",
-                freq: "3× par jour",
-                duration: "5 min",
-                desc: "Inspirez 5 sec, expirez 5 sec. Idéal le matin, après le repas, et avant de dormir.",
-                href: "/exercises",
-              },
-              {
-                icon: "⏸️",
-                name: "Pause contrôlée",
-                freq: "1× par jour",
-                duration: "5–10 min",
-                desc: "Mesurez votre tolérance au CO₂. Votre score progresse semaine après semaine.",
-                href: "/exercises",
-              },
-              {
-                icon: "👅",
-                name: "Langue au palais",
-                freq: "2× par jour",
-                duration: "2 min",
-                desc: "Maintenez la pointe de la langue contre le palais. Peut se faire n'importe où.",
-                href: "/exercises",
-              },
-              {
-                icon: "👃",
-                name: "Respiration nasale",
-                freq: "1× par jour",
-                duration: "3 min",
-                desc: "Marchez en respirant uniquement par le nez. Ralentissez si nécessaire.",
-                href: "/exercises",
-              },
-            ].map((ex) => (
-              <a
-                key={ex.name}
-                href={ex.href}
-                className="flex items-start gap-4 p-4 rounded-2xl border border-beige-300 bg-white hover:border-forest-300 hover:shadow-sm transition-all group"
+
+          {prescribedExercises.length > 0 ? (
+            <>
+              <p className="text-sm text-forest-500 mb-6">
+                {prescribedExercises.length} exercice{prescribedExercises.length > 1 ? "s" : ""} prescrit{prescribedExercises.length > 1 ? "s" : ""} par votre thérapeute.
+              </p>
+              <div className="space-y-3">
+                {prescribedExercises.map((ex) => (
+                  <Link
+                    key={ex.id}
+                    href={`/session/${ex.id}`}
+                    className="flex items-start gap-4 p-4 rounded-2xl border border-beige-300 bg-white hover:border-forest-300 hover:shadow-sm transition-all group"
+                  >
+                    <span className="text-2xl flex-shrink-0 mt-0.5">{ex.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-forest-800">{ex.name_fr}</p>
+                        <span className="text-xs bg-forest-500/10 text-forest-700 px-2 py-0.5 rounded-full font-medium">{ex.frequency_label}</span>
+                        <span className="text-xs text-forest-500">{Math.floor(ex.duration_seconds / 60)} min</span>
+                      </div>
+                      <p className="text-sm text-forest-600 mt-0.5 leading-relaxed">{ex.description_fr}</p>
+                      {ex.ortho_note && (
+                        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1 mt-2 italic">
+                          💬 {ex.ortho_note}
+                        </p>
+                      )}
+                    </div>
+                    <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 flex-shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ))}
+              </div>
+              <p className="text-xs text-forest-400 mt-4 text-center">
+                Votre thérapeute peut ajuster ce programme à tout moment.
+              </p>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-4xl mb-3">🩺</p>
+              <p className="text-forest-700 font-medium mb-1">Aucun exercice prescrit pour l'instant</p>
+              <p className="text-sm text-forest-500 mb-4">
+                Votre thérapeute n'a pas encore configuré votre programme. En attendant, vous pouvez explorer tous les exercices disponibles.
+              </p>
+              <Link
+                href="/exercises"
+                className="inline-block px-5 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-semibold hover:bg-forest-600 transition-colors"
               >
-                <span className="text-2xl flex-shrink-0 mt-0.5">{ex.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-forest-800">{ex.name}</p>
-                    <span className="text-xs bg-forest-500/10 text-forest-700 px-2 py-0.5 rounded-full font-medium">{ex.freq}</span>
-                    <span className="text-xs text-forest-500">{ex.duration}</span>
-                  </div>
-                  <p className="text-sm text-forest-600 mt-0.5 leading-relaxed">{ex.desc}</p>
-                </div>
-                <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 flex-shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
-            ))}
-          </div>
-          <p className="text-xs text-forest-400 mt-4 text-center">
-            Votre orthophoniste peut ajuster ce programme à tout moment depuis son tableau de bord.
-          </p>
+                Voir tous les exercices →
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Dashboard Shortcuts */}
