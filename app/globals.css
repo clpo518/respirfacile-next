@@ -37,6 +37,8 @@
   }
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
   }
