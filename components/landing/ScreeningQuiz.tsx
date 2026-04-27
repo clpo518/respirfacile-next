@@ -17,25 +17,25 @@ const RESULTS: Record<NonNullable<Profile>, { title: string; desc: string; ctaPr
   apnees: {
     title: "Vous pourriez beneficier d'une reeducation respiratoire",
     desc: "Vos reponses indiquent des signes d'apnees du sommeil. Un orthophoniste ou un kinesitherapeute peut vous prescrire un programme d'exercices guide. Parlez-en a votre medecin.",
-    ctaPro: "Je suis praticien — essayer Respirfacile",
+    ctaPro: "Je suis praticien, essayer Respirfacile",
     ctaPatient: "Mon praticien m'a deja donne un code",
   },
   respiration: {
     title: "Des exercices de respiration pourraient vous aider",
     desc: "Vos reponses indiquent une respiration buccale ou une mauvaise posture. Un specialiste peut vous guider avec des exercices quotidiens simples.",
-    ctaPro: "Je suis praticien — essayer Respirfacile",
+    ctaPro: "Je suis praticien, essayer Respirfacile",
     ctaPatient: "Mon praticien m'a deja donne un code",
   },
   both: {
     title: "Vous combinez plusieurs symptomes courants",
-    desc: "Ronflements, fatigue, respiration buccale — c'est frequent et tout a fait traitable. Parlez-en a votre medecin ou consultez un orthophoniste.",
-    ctaPro: "Je suis praticien — essayer Respirfacile",
+    desc: "Ronflements, fatigue, respiration buccale : c'est fréquent et tout à fait traitable. Parlez-en à votre médecin ou consultez un orthophoniste.",
+    ctaPro: "Je suis praticien, essayer Respirfacile",
     ctaPatient: "Mon praticien m'a deja donne un code",
   },
   unrelated: {
     title: "Respirfacile est peut-etre moins adapte",
     desc: "Vos reponses n'indiquent pas clairement de probleme respiratoire. Consultez un medecin pour un bilan. Si un specialiste vous prescrit des exercices, revenez nous voir.",
-    ctaPro: "Je suis praticien — en savoir plus",
+    ctaPro: "Je suis praticien, en savoir plus",
     ctaPatient: "J'ai quand meme un code praticien",
   },
 }

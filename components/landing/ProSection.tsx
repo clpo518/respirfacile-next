@@ -15,7 +15,7 @@ export function ProSection() {
     {
       emoji: "📈",
       title: "Graphiques semaine par semaine",
-      desc: "Pause contrôlée, cohérence cardiaque, respiration nasale — chaque score tracé. La progression visible motive et vous informe.",
+      desc: "Pause contrôlée, cohérence cardiaque, respiration nasale : chaque score tracé. La progression visible motive et vous informe.",
     },
     {
       emoji: "📄",

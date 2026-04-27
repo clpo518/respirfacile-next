@@ -20,16 +20,16 @@ export function HeroSection() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-forest-800 leading-[1.08] mb-6 tracking-tight">
-            Guidez la rééducation respiratoire de vos patients —
-            <span style={{color: "#2D5016"}}>même quand ils sont chez eux.</span>
+            Vos patients font leurs exercices.{" "}
+            <span style={{color: "#2D5016"}}>Même quand vous n'êtes pas là.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-forest-700 leading-relaxed mb-4 max-w-2xl mx-auto font-light">
-            Application de rééducation respiratoire pour SAOS et TMOF — prescrite par vous, pratiquée chaque jour par vos patients, suivie depuis votre tableau de bord.
+            Prescrivez un programme respiratoire personnalisé. Vos patients le suivent chaque jour depuis leur téléphone. Vous voyez les résultats en temps réel.
           </p>
 
           <p className="text-base text-forest-600 mb-10 max-w-xl mx-auto">
-            15 min par jour. Vos patients ont les instructions. Vous recevez les données. Les résultats arrivent.
+            15 min par jour. Guidé, mesuré, suivi. Sans rendez-vous supplémentaire.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -37,7 +37,7 @@ export function HeroSection() {
               href="/auth?mode=signup&role=therapist"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#2D5016] hover:bg-[#1e3a0f] text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
-              Essayer gratuitement — 30 jours
+              Essayer gratuitement · 30 jours →
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
               </svg>

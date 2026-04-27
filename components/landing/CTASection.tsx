@@ -20,7 +20,7 @@ export function CTASection() {
         </h2>
 
         <p className="text-lg text-beige-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-          30 jours d'essai gratuit, sans carte bancaire. Vos patients accèdent gratuitement via votre code — vous ne payez que pour votre abonnement.
+          30 jours d'essai gratuit, sans carte bancaire. Vos patients accèdent gratuitement via votre code. Vous ne payez que pour votre abonnement.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
