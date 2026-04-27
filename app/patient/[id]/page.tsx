@@ -135,6 +135,33 @@ export default async function PatientDetailPage({ params }: Props) {
   const isProgressing = week1Sessions > week4Sessions;
   const trendIndicator = isProgressing ? "📈" : week1Sessions < week4Sessions ? "📉" : "➡️";
 
+  // Prescriptions actives + complétion par exercice (7 derniers jours)
+  const { data: prescriptions } = await supabase
+    .from("prescriptions")
+    .select("id, exercise_id, frequency_per_day, frequency_label, notes")
+    .eq("patient_id", id)
+    .eq("is_active", true);
+
+  const prescriptionList = prescriptions ?? [];
+
+  // Sessions par exercice prescrit sur les 7 derniers jours
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const recentSessionsByExercise: Record<string, number> = {};
+  sessionList
+    .filter(s => new Date(s.created_at) >= sevenDaysAgo)
+    .forEach(s => {
+      recentSessionsByExercise[s.exercise_id] = (recentSessionsByExercise[s.exercise_id] || 0) + 1;
+    });
+
+  const prescriptionsWithCompletion = prescriptionList.map(p => {
+    const ex = getExerciseById(p.exercise_id);
+    const doneLastWeek = recentSessionsByExercise[p.exercise_id] || 0;
+    const expectedLastWeek = (p.frequency_per_day || 1) * 7;
+    const compliancePct = Math.min(Math.round((doneLastWeek / expectedLastWeek) * 100), 100);
+    return { ...p, ex, doneLastWeek, expectedLastWeek, compliancePct };
+  });
+
   return (
     <div className="min-h-screen bg-beige-200 bg-texture">
       {/* Header */}
@@ -311,6 +338,51 @@ export default async function PatientDetailPage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {/* Programme prescrit + taux de complétion */}
+        {prescriptionsWithCompletion.length > 0 && (
+          <div className="bg-beige-100 rounded-3xl border border-beige-300 p-6 shadow-beige mb-8">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="font-semibold text-lg text-forest-800">💊 Programme prescrit</h2>
+                <p className="text-xs text-forest-500 mt-1">Taux de complétion sur les 7 derniers jours</p>
+              </div>
+              <Link
+                href={`/therapist/patients/${id}/program`}
+                className="text-xs text-forest-600 hover:text-forest-800 border border-beige-300 hover:border-forest-300 px-3 py-1.5 rounded-full transition-colors"
+              >
+                Modifier le programme →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {prescriptionsWithCompletion.map((p) => (
+                <div key={p.id} className="flex items-center gap-4 p-3 rounded-2xl border border-beige-200 bg-white">
+                  <span className="text-xl flex-shrink-0">{p.ex?.emoji || "🫁"}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-sm font-medium text-forest-800 truncate">{p.ex?.name_fr || p.exercise_id}</span>
+                      <span className={`text-xs font-bold flex-shrink-0 ${p.compliancePct >= 70 ? "text-green-600" : p.compliancePct >= 40 ? "text-amber-600" : "text-red-500"}`}>
+                        {p.compliancePct}%
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-beige-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${p.compliancePct >= 70 ? "bg-green-500" : p.compliancePct >= 40 ? "bg-amber-400" : "bg-red-400"}`}
+                        style={{ width: `${p.compliancePct}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-forest-400 mt-1">
+                      {p.doneLastWeek}/{p.expectedLastWeek} séances · {p.frequency_label}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-forest-400 text-center mt-4">
+              ≥ 70% = bonne observance · 40-69% = à encourager · &lt; 40% = à revoir en consultation
+            </p>
+          </div>
+        )}
 
         {/* Observance 4 semaines */}
         <div className="bg-beige-100 rounded-3xl border border-beige-300 p-6 shadow-beige mb-8">

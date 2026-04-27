@@ -48,17 +48,50 @@ export default async function DashboardPage({
   // Récupérer les prescriptions actives de l'ortho
   const { data: prescriptions } = await supabase
     .from("prescriptions")
-    .select("id, exercise_id, frequency_label, notes")
+    .select("id, exercise_id, frequency_label, frequency_per_day, notes")
     .eq("patient_id", user.id)
     .eq("is_active", true);
+
+  // Sessions faites aujourd'hui (pour badge complétion)
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const { data: sessionsToday } = await supabase
+    .from("sessions")
+    .select("exercise_id, prescription_id")
+    .eq("user_id", user.id)
+    .gte("created_at", todayStart.toISOString());
+
+  const sessionsTodayByExercise: Record<string, number> = {};
+  (sessionsToday || []).forEach((s) => {
+    const key = s.exercise_id;
+    sessionsTodayByExercise[key] = (sessionsTodayByExercise[key] || 0) + 1;
+  });
 
   // Matcher avec le catalogue d'exercices
   const prescribedExercises = (prescriptions || [])
     .map((p) => {
       const ex = EXERCISES.find((e) => e.id === p.exercise_id);
-      return ex ? { ...ex, frequency_label: p.frequency_label, ortho_note: p.notes } : null;
+      if (!ex) return null;
+      const doneToday = sessionsTodayByExercise[p.exercise_id] || 0;
+      const isDone = doneToday >= (p.frequency_per_day || 1);
+      return {
+        ...ex,
+        prescriptionId: p.id,
+        frequency_label: p.frequency_label,
+        frequency_per_day: p.frequency_per_day,
+        ortho_note: p.notes,
+        doneToday,
+        isDone,
+      };
     })
-    .filter(Boolean) as Array<(typeof EXERCISES)[0] & { frequency_label: string; ortho_note: string | null }>;
+    .filter(Boolean) as Array<(typeof EXERCISES)[0] & {
+      prescriptionId: string;
+      frequency_label: string;
+      frequency_per_day: number;
+      ortho_note: string | null;
+      doneToday: number;
+      isDone: boolean;
+    }>;
 
   return (
     <div className="min-h-screen bg-beige-200 bg-texture">
@@ -233,14 +266,23 @@ export default async function DashboardPage({
                   <Link
                     key={ex.id}
                     href={`/session/${ex.id}`}
-                    className="flex items-start gap-4 p-4 rounded-2xl border border-beige-300 bg-white hover:border-forest-300 hover:shadow-sm transition-all group"
+                    className={`flex items-start gap-4 p-4 rounded-2xl border transition-all group ${
+                      ex.isDone
+                        ? "border-green-200 bg-green-50/50 opacity-80"
+                        : "border-beige-300 bg-white hover:border-forest-300 hover:shadow-sm"
+                    }`}
                   >
                     <span className="text-2xl flex-shrink-0 mt-0.5">{ex.emoji}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-forest-800">{ex.name_fr}</p>
+                        <p className={`font-semibold ${ex.isDone ? "text-green-800" : "text-forest-800"}`}>{ex.name_fr}</p>
                         <span className="text-xs bg-forest-500/10 text-forest-700 px-2 py-0.5 rounded-full font-medium">{ex.frequency_label}</span>
                         <span className="text-xs text-forest-500">{Math.floor(ex.duration_seconds / 60)} min</span>
+                        {ex.doneToday > 0 && !ex.isDone && (
+                          <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                            {ex.doneToday}/{ex.frequency_per_day} fait
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-forest-600 mt-0.5 leading-relaxed">{ex.description_fr}</p>
                       {ex.ortho_note && (
@@ -249,15 +291,29 @@ export default async function DashboardPage({
                         </p>
                       )}
                     </div>
-                    <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 flex-shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+                    {ex.isDone ? (
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <svg className="w-4 h-4 text-forest-400 group-hover:text-forest-600 flex-shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    )}
                   </Link>
                 ))}
               </div>
-              <p className="text-xs text-forest-400 mt-4 text-center">
-                Votre thérapeute peut ajuster ce programme à tout moment.
-              </p>
+              <div className="mt-4 text-center">
+                {prescribedExercises.filter((e) => e.isDone).length === prescribedExercises.length ? (
+                  <p className="text-sm text-green-700 font-semibold">🎉 Tous vos exercices du jour sont faits !</p>
+                ) : (
+                  <p className="text-xs text-forest-400">
+                    {prescribedExercises.filter((e) => e.isDone).length}/{prescribedExercises.length} exercice{prescribedExercises.length > 1 ? "s" : ""} fait{prescribedExercises.length > 1 ? "s" : ""} aujourd'hui · Votre thérapeute peut ajuster ce programme.
+                  </p>
+                )}
+              </div>
             </>
           ) : (
             <div className="text-center py-8">

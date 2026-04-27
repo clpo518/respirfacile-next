@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import PatientStatusBadge from './PatientStatusBadge';
+import { getRetentionStatus, getRetentionInfo, daysSince } from '@/lib/retention';
 
 interface Patient {
   id: string;
@@ -10,71 +10,54 @@ interface Patient {
   profile_type?: string;
   lastSessionDate?: string;
   sessionsThisWeek?: number;
+  sessionsTotal?: number;
+  prescriptionsCount?: number;
   journalAlerts?: boolean;
 }
 
 interface PatientsTableProps {
   patients: Patient[];
-  onFilterChange?: (filter: 'all' | 'active' | 'inactive') => void;
-  currentFilter?: 'all' | 'active' | 'inactive';
+  onFilterChange?: (filter: 'all' | 'active' | 'slipping' | 'inactive') => void;
+  currentFilter?: string;
 }
-
-const daysSinceDate = (dateStr?: string) => {
-  if (!dateStr) return 999;
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-};
 
 const getInitials = (name?: string) => {
   if (!name) return '?';
-  return name
-    .split(' ')
-    .map((word) => word[0].toUpperCase())
-    .join('')
-    .slice(0, 2);
+  return name.split(' ').map((w) => w[0]?.toUpperCase()).join('').slice(0, 2);
 };
 
-export default function PatientsTable({
-  patients,
-  onFilterChange,
-  currentFilter = 'all',
-}: PatientsTableProps) {
+export default function PatientsTable({ patients, onFilterChange, currentFilter = 'all' }: PatientsTableProps) {
+  const counts = {
+    all: patients.length,
+    active: patients.filter((p) => getRetentionStatus(daysSince(p.lastSessionDate), !!p.lastSessionDate) === 'active').length,
+    slipping: patients.filter((p) => getRetentionStatus(daysSince(p.lastSessionDate), !!p.lastSessionDate) === 'slipping').length,
+    inactive: patients.filter((p) => {
+      const s = getRetentionStatus(daysSince(p.lastSessionDate), !!p.lastSessionDate);
+      return s === 'dropout' || s === 'new';
+    }).length,
+  };
+
   return (
     <div className="bg-white rounded-3xl border border-beige-200 shadow-sm overflow-hidden">
+      {/* Filtres */}
       {onFilterChange && (
-        <div className="border-b border-beige-200 px-8 py-4 flex gap-2">
-          <button
-            onClick={() => onFilterChange('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              currentFilter === 'all'
-                ? 'bg-forest-100 text-forest-700'
-                : 'text-forest-600 hover:bg-beige-100'
-            }`}
-          >
-            Tous ({patients.length})
-          </button>
-          <button
-            onClick={() => onFilterChange('active')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              currentFilter === 'active'
-                ? 'bg-green-100 text-green-700'
-                : 'text-forest-600 hover:bg-beige-100'
-            }`}
-          >
-            Actifs ({patients.filter((p) => daysSinceDate(p.lastSessionDate) <= 3).length})
-          </button>
-          <button
-            onClick={() => onFilterChange('inactive')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              currentFilter === 'inactive'
-                ? 'bg-amber-100 text-amber-700'
-                : 'text-forest-600 hover:bg-beige-100'
-            }`}
-          >
-            Inactifs ({patients.filter((p) => daysSinceDate(p.lastSessionDate) > 7).length})
-          </button>
+        <div className="border-b border-beige-200 px-6 py-3 flex gap-2 flex-wrap">
+          {[
+            { key: 'all', label: `Tous (${counts.all})`, active: 'bg-forest-100 text-forest-700' },
+            { key: 'active', label: `✅ Actifs (${counts.active})`, active: 'bg-green-100 text-green-700' },
+            { key: 'slipping', label: `⚠️ En baisse (${counts.slipping})`, active: 'bg-amber-100 text-amber-700' },
+            { key: 'inactive', label: `🔴 Inactifs (${counts.inactive})`, active: 'bg-red-100 text-red-700' },
+          ].map(({ key, label, active }) => (
+            <button
+              key={key}
+              onClick={() => onFilterChange(key as any)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                currentFilter === key ? active : 'text-forest-600 hover:bg-beige-100'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       )}
 
@@ -82,97 +65,90 @@ export default function PatientsTable({
         <table className="w-full">
           <thead className="bg-beige-50 border-b border-beige-200">
             <tr>
-              <th className="px-8 py-4 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Patient
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Profil
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Dernière séance
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Séances/semaine
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Statut
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-forest-600 uppercase tracking-wider">
-                Actions
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">Patient</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">Rétention</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">Dernière séance</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">Séances</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-forest-600 uppercase tracking-wider">Programme</th>
+              <th className="px-4 py-3 text-right text-xs font-semibold text-forest-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-beige-200">
+          <tbody className="divide-y divide-beige-100">
             {patients.map((patient) => {
-              const daysSince = daysSinceDate(patient.lastSessionDate);
+              const d = daysSince(patient.lastSessionDate);
+              const hasEver = !!patient.lastSessionDate;
+              const status = getRetentionStatus(d, hasEver);
+              const info = getRetentionInfo(status);
+
               return (
-                <tr
-                  key={patient.id}
-                  className="hover:bg-beige-50 transition-colors"
-                >
-                  <td className="px-8 py-4">
+                <tr key={patient.id} className="hover:bg-beige-50 transition-colors">
+                  {/* Patient */}
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-sm font-semibold text-forest-700">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${info.bgColor} ${info.textColor}`}>
                         {getInitials(patient.full_name)}
                       </div>
                       <div>
-                        <p className="font-semibold text-forest-800">
-                          {patient.full_name || 'Sans nom'}
-                        </p>
-                        <p className="text-xs text-forest-500">{patient.email}</p>
+                        <p className="font-semibold text-forest-800 text-sm">{patient.full_name || 'Sans nom'}</p>
+                        <p className="text-xs text-forest-400">{patient.email}</p>
                       </div>
                     </div>
                   </td>
 
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-forest-700">
-                      {patient.profile_type || '—'}
+                  {/* Badge rétention */}
+                  <td className="px-4 py-4">
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border ${info.bgColor} ${info.textColor} ${info.borderColor}`}>
+                      {info.emoji} {info.label}
                     </span>
                   </td>
 
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-forest-700">
+                  {/* Dernière séance */}
+                  <td className="px-4 py-4">
+                    <span className={`text-sm font-medium ${d <= 2 ? 'text-green-600' : d <= 5 ? 'text-amber-600' : 'text-red-500'}`}>
                       {patient.lastSessionDate
-                        ? `${daysSince}j`
+                        ? d === 0 ? "Aujourd'hui" : d === 1 ? 'Hier' : `Il y a ${d}j`
                         : 'Jamais'}
                     </span>
                   </td>
 
-                  <td className="px-6 py-4">
-                    <span className="text-sm font-medium text-forest-800">
-                      {patient.sessionsThisWeek || 0}
-                    </span>
+                  {/* Séances */}
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-forest-800">{patient.sessionsTotal || 0}</span>
+                      <span className="text-xs text-forest-400">total</span>
+                    </div>
+                    {(patient.sessionsThisWeek || 0) > 0 && (
+                      <p className="text-xs text-green-600 font-medium">{patient.sessionsThisWeek} cette semaine</p>
+                    )}
                   </td>
 
-                  <td className="px-6 py-4">
-                    <PatientStatusBadge
-                      lastSessionDays={daysSince}
-                      hasJournalAlert={patient.journalAlerts || false}
-                    />
+                  {/* Programme prescrit */}
+                  <td className="px-4 py-4">
+                    {(patient.prescriptionsCount || 0) > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-forest-700 bg-forest-50 border border-forest-200 px-2 py-1 rounded-full">
+                        💊 {patient.prescriptionsCount} exercice{(patient.prescriptionsCount || 0) > 1 ? 's' : ''}
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/therapist/patients/${patient.id}/program`}
+                        className="text-xs text-amber-600 hover:text-amber-800 font-medium underline"
+                      >
+                        + Prescrire
+                      </Link>
+                    )}
                   </td>
 
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/therapist/patients/${patient.id}`}
-                        className="px-3 py-2 rounded-lg hover:bg-beige-100 text-forest-600 font-medium text-sm transition-colors"
-                        title="Voir le patient"
-                      >
-                        📊 Voir
+                  {/* Actions */}
+                  <td className="px-4 py-4">
+                    <div className="flex items-center justify-end gap-1">
+                      <Link href={`/therapist/patients/${patient.id}`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Voir">
+                        📊
                       </Link>
-                      <Link
-                        href={`/therapist/patients/${patient.id}/journal`}
-                        className="px-3 py-2 rounded-lg hover:bg-beige-100 text-forest-600 font-medium text-sm transition-colors"
-                        title="Journal du patient"
-                      >
-                        📓 Journal
+                      <Link href={`/therapist/patients/${patient.id}/program`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Prescrire">
+                        💊
                       </Link>
-                      <Link
-                        href={`/therapist/patients/${patient.id}/notes`}
-                        className="px-3 py-2 rounded-lg hover:bg-beige-100 text-forest-600 font-medium text-sm transition-colors"
-                        title="Ajouter une note"
-                      >
-                        ✏️ Note
+                      <Link href={`/therapist/patients/${patient.id}/notes`} className="px-2.5 py-1.5 rounded-lg hover:bg-beige-100 text-forest-600 text-xs font-medium transition-colors" title="Notes">
+                        ✏️
                       </Link>
                     </div>
                   </td>

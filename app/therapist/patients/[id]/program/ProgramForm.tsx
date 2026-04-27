@@ -127,6 +127,28 @@ export function ProgramForm({ patientId, therapistId, patientName, initialPrescr
           setError("Erreur lors de l'enregistrement : " + insertErr.message);
           return;
         }
+
+        // 3. Notifier le patient par email (Edge Function)
+        try {
+          const exercisesForEmail = Array.from(prescriptions.values()).map((p) => {
+            const ex = EXERCISES.find((e) => e.id === p.exercise_id);
+            return {
+              name: ex?.name_fr || p.exercise_id,
+              frequency: p.frequency_label,
+              note: p.notes || undefined,
+            };
+          });
+          await supabase.functions.invoke("notify-prescription", {
+            body: {
+              patient_id: patientId,
+              therapist_id: therapistId,
+              exercises: exercisesForEmail,
+            },
+          });
+        } catch {
+          // Ne pas bloquer si l'email échoue
+          console.warn("Email notification failed (non-blocking)");
+        }
       }
 
       setSuccess(true);

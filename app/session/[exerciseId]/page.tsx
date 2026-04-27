@@ -30,5 +30,14 @@ export default async function SessionPage({ params }: PageProps) {
     profile?.role === "therapist" || profile?.role === "kine";
   if (isTherapist) redirect("/therapist");
 
-  return <SessionClient exercise={exercise} userId={user.id} />;
+  // Vérifier si cet exercice est prescrit (pour lier la session à la prescription)
+  const { data: prescription } = await supabase
+    .from("prescriptions")
+    .select("id")
+    .eq("patient_id", user.id)
+    .eq("exercise_id", exerciseId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  return <SessionClient exercise={exercise} userId={user.id} prescriptionId={prescription?.id ?? null} />;
 }

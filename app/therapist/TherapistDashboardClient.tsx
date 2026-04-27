@@ -7,6 +7,7 @@ import AlertsSection from '@/components/therapist/AlertsSection';
 import PatientsTable from '@/components/therapist/PatientsTable';
 import RecentJournalEntries from '@/components/therapist/RecentJournalEntries';
 import Link from 'next/link';
+import { getRetentionStatus, daysSince } from '@/lib/retention';
 
 interface PatientData {
   id: string;
@@ -15,6 +16,8 @@ interface PatientData {
   profile_type?: string;
   lastSessionDate?: string;
   sessionsThisWeek?: number;
+  sessionsTotal?: number;
+  prescriptionsCount?: number;
   journalAlerts?: boolean;
 }
 
@@ -36,13 +39,6 @@ interface Alert {
   daysInactive?: number;
 }
 
-const daysSinceDate = (dateStr?: string) => {
-  if (!dateStr) return 999;
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-};
 
 export default function TherapistDashboardClient() {
   const [user, setUser] = useState<any>(null);
@@ -51,7 +47,7 @@ export default function TherapistDashboardClient() {
   const [journalEntries, setJournalEntries] = useState<TherapistJournalEntry[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'slipping' | 'inactive'>('all');
 
   useEffect(() => {
     const supabase = createClient();
@@ -84,56 +80,78 @@ export default function TherapistDashboardClient() {
         .eq('therapist_id', therapistId);
 
       if (!patientsError && therapistPatients) {
-        // Charger les sessions pour chaque patient
+        // Charger les données enrichies pour chaque patient
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const oneWeekAgoStr = oneWeekAgo.toISOString();
+
         const patientsWithSessions = await Promise.all(
           therapistPatients.map(async (tp: any) => {
-            const { data: sessions } = await supabase
+            // Dernière séance
+            const { data: lastSessions } = await supabase
               .from('sessions')
               .select('created_at')
               .eq('user_id', tp.patient_id)
               .order('created_at', { ascending: false })
               .limit(1);
 
-            const { data: entries } = await supabase
-              .from('journal_entries')
-              .select('anxiety_level')
-              .eq('user_id', tp.patient_id)
-              .eq('anxiety_level', '>=7')
-              .single();
+            // Total séances
+            const { count: totalCount } = await supabase
+              .from('sessions')
+              .select('id', { count: 'exact', head: true })
+              .eq('user_id', tp.patient_id);
 
-            const lastSessionDate = sessions?.[0]?.created_at;
+            // Séances cette semaine
+            const { count: weekCount } = await supabase
+              .from('sessions')
+              .select('id', { count: 'exact', head: true })
+              .eq('user_id', tp.patient_id)
+              .gte('created_at', oneWeekAgoStr);
+
+            // Prescriptions actives
+            const { count: prescrCount } = await supabase
+              .from('prescriptions')
+              .select('id', { count: 'exact', head: true })
+              .eq('patient_id', tp.patient_id)
+              .eq('is_active', true);
+
+            const lastSessionDate = lastSessions?.[0]?.created_at;
             return {
               id: tp.patient_id,
               full_name: tp.patient?.full_name || 'Sans nom',
               email: tp.patient?.email || '',
-              profile_type: tp.patient?.profile_type || '—',
+              profile_type: tp.patient?.profile_type,
               lastSessionDate,
-              sessionsThisWeek: 0,
-              journalAlerts: !!entries,
+              sessionsTotal: totalCount || 0,
+              sessionsThisWeek: weekCount || 0,
+              prescriptionsCount: prescrCount || 0,
+              journalAlerts: false,
             };
           })
         );
 
         setPatients(patientsWithSessions);
 
-        // Construire les alertes
+        // Construire les alertes (inactifs depuis >5j = dropout)
         const newAlerts: Alert[] = [];
         patientsWithSessions.forEach((p) => {
-          const daysSince = daysSinceDate(p.lastSessionDate);
-          if (p.journalAlerts) {
-            newAlerts.push({
-              patientId: p.id,
-              patientName: p.full_name,
-              reason: 'anxiety',
-              details: 'Anxiété signalée dans le journal',
-            });
-          } else if (daysSince > 7) {
+          const d = daysSince(p.lastSessionDate);
+          const status = getRetentionStatus(d, !!p.lastSessionDate);
+          if (status === 'dropout') {
             newAlerts.push({
               patientId: p.id,
               patientName: p.full_name,
               reason: 'inactive',
-              details: `Inactif depuis ${daysSince} jours`,
-              daysInactive: daysSince,
+              details: `Inactif depuis ${d} jours`,
+              daysInactive: d,
+            });
+          } else if (status === 'slipping') {
+            newAlerts.push({
+              patientId: p.id,
+              patientName: p.full_name,
+              reason: 'slipping',
+              details: `En baisse — dernière séance il y a ${d} jours`,
+              daysInactive: d,
             });
           }
         });
@@ -173,13 +191,19 @@ export default function TherapistDashboardClient() {
   if (!user) return <div>Chargement...</div>;
 
   const filteredPatients = patients.filter((p) => {
-    const daysSince = daysSinceDate(p.lastSessionDate);
-    if (filterStatus === 'active') return daysSince <= 3;
-    if (filterStatus === 'inactive') return daysSince > 7;
+    if (filterStatus === 'all') return true;
+    const d = daysSince(p.lastSessionDate);
+    const status = getRetentionStatus(d, !!p.lastSessionDate);
+    if (filterStatus === 'active') return status === 'active';
+    if (filterStatus === 'slipping') return status === 'slipping';
+    if (filterStatus === 'inactive') return status === 'dropout' || status === 'new';
     return true;
   });
 
-  const activeCount = patients.filter((p) => daysSinceDate(p.lastSessionDate) <= 3).length;
+  const activeCount = patients.filter((p) => {
+    const d = daysSince(p.lastSessionDate);
+    return getRetentionStatus(d, !!p.lastSessionDate) === 'active';
+  }).length;
   const alertCount = alerts.length;
 
   return (

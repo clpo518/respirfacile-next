@@ -278,9 +278,11 @@ interface PreviousSessionData {
 export default function SessionClient({
   exercise,
   userId,
+  prescriptionId = null,
 }: {
   exercise: Exercise;
   userId: string;
+  prescriptionId?: string | null;
 }) {
   const router = useRouter();
   const [state, setState] = useState<SessionState>("intro");
@@ -371,6 +373,7 @@ export default function SessionClient({
       metrics,
       score: exercise.requiresInput && metricValue ? parseInt(metricValue, 10) || null : null,
       completed: true,
+      ...(prescriptionId ? { prescription_id: prescriptionId } : {}),
     });
 
     if (dbError) {
