@@ -8,6 +8,9 @@ import { StreakDisplay } from "@/components/StreakDisplay";
 import { MoodRing } from "@/components/MoodRing";
 import { DashboardShortcuts } from "@/components/DashboardShortcuts";
 import { PatientMessages } from "@/components/PatientMessages";
+import { UnreadMessageBadge } from "@/components/UnreadMessageBadge";
+import { ProgressionChart } from "@/components/ProgressionChart";
+import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 import { EXERCISES } from "@/lib/data/exercises";
 import CelebrationToast from "@/components/CelebrationToast";
 import Link from "next/link";
@@ -130,14 +133,19 @@ export default async function DashboardPage({
             <LogoIcon size={28} />
             <span style={{fontWeight:600,color:"#2D5016",letterSpacing:"-0.01em"}}>Respir<span style={{color:"#8B4513"}}>facile</span></span>
           </div>
-          <form action="/auth/signout" method="post">
-            <button
-              type="submit"
-              className="text-sm text-forest-500 hover:text-forest-700 transition-colors"
-            >
-              Déconnexion
-            </button>
-          </form>
+          <div className="flex items-center gap-3">
+            <Suspense fallback={null}>
+              <UnreadMessageBadge patientId={user.id} />
+            </Suspense>
+            <form action="/auth/signout" method="post">
+              <button
+                type="submit"
+                className="text-sm text-forest-500 hover:text-forest-700 transition-colors"
+              >
+                Déconnexion
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 
@@ -336,6 +344,21 @@ export default async function DashboardPage({
               </Link>
             </div>
           )}
+        </div>
+
+        {/* Graphique progression + heatmap */}
+        <div className="space-y-4 mb-8">
+          <h2 className="font-semibold text-lg text-forest-800">📊 Votre progression</h2>
+          <Suspense fallback={<div className="h-40 bg-beige-100 rounded-3xl animate-pulse" />}>
+            <ProgressionChart
+              userId={user.id}
+              exerciseId="pause_controlee_decouverte"
+              title="Pause Contrôlée — évolution du score"
+            />
+          </Suspense>
+          <Suspense fallback={<div className="h-32 bg-beige-100 rounded-3xl animate-pulse" />}>
+            <ActivityHeatmap userId={user.id} />
+          </Suspense>
         </div>
 
         {/* Dashboard Shortcuts */}
