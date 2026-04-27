@@ -49,10 +49,10 @@ export default function HomePage() {
                 </h2>
                 <div className="space-y-4 mb-8">
                   {[
-                    { emoji: "🎯", title: "Exercices guides etape par etape", desc: "Un timer, des instructions claires, votre score enregistre automatiquement apres chaque seance." },
-                    { emoji: "📈", title: "Votre progression en un coup d'oeil", desc: "Graphiques, scores, seances realisees — vous voyez concretement ce qui s'ameliore." },
-                    { emoji: "📄", title: "Votre praticien suit votre evolution", desc: "Votre orthophoniste ou kine voit vos resultats en temps reel et ajuste votre programme." },
-                    { emoji: "💬", title: "Vos messages de suivi", desc: "Votre praticien vous laisse des encouragements et des conseils personnalises directement dans l'app." },
+                    { emoji: "🎯", title: "Exercices guidés étape par étape", desc: "Un timer, des instructions claires, votre score enregistré automatiquement après chaque séance." },
+                    { emoji: "📈", title: "Votre progression en un coup d'œil", desc: "Graphiques, scores, séances réalisées : vous voyez concrètement ce qui s'améliore." },
+                    { emoji: "📄", title: "Votre praticien suit votre évolution", desc: "Votre orthophoniste ou kiné voit vos résultats en temps réel et ajuste votre programme." },
+                    { emoji: "💬", title: "Vos messages de suivi", desc: "Votre praticien vous laisse des encouragements et des conseils personnalisés directement dans l'app." },
                   ].map((f) => (
                     <div key={f.title} className="flex gap-3">
                       <span className="text-xl flex-shrink-0 mt-0.5">{f.emoji}</span>

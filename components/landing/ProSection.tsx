@@ -39,7 +39,7 @@ export function ProSection() {
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#8B4513] mb-3">Fonctionnalités</p>
           <h2 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">Tout pour suivre vos patients<br/>entre les séances</h2>
-          <p className="text-xl text-forest-600 max-w-2xl mx-auto font-light">Conçu avec des orthophonistes spécialisées SAOS. Rien de superflu — tout ce qui change vraiment la régularité.</p>
+          <p className="text-xl text-forest-600 max-w-2xl mx-auto font-light">Conçu avec des orthophonistes spécialisées SAOS. Rien de superflu. Tout ce qui change vraiment la régularité.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
