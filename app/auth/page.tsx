@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { AuthForm } from "@/components/auth/AuthForm"
 import Link from "next/link"
+import { LogoWordmark } from "@/components/ui/Logo"
 
 export const metadata: Metadata = {
   title: "Connexion — Respirfacile",
@@ -19,17 +20,7 @@ export default function AuthPage() {
 
       {/* Nav */}
       <header className="w-full max-w-7xl mx-auto px-6 py-5 relative z-10">
-        <Link href="/" className="inline-flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-[#2D5016] flex items-center justify-center shadow-sm">
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-              <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <span className="font-semibold text-lg text-forest-800">
-            Respir<span className="text-copper-500">facile</span>
-          </span>
-        </Link>
+        <LogoWordmark iconSize={32} />
       </header>
 
       {/* Content */}

@@ -1,3 +1,4 @@
+import { LogoIcon } from "@/components/ui/Logo"
 import Link from "next/link"
 
 export function Footer() {
@@ -7,12 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-forest-500 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-                  <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-                </svg>
-              </div>
+              <LogoIcon size={28} />
               <span className="font-semibold text-white">Respirfacile</span>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">Rééducation respiratoire guidée pour SAOS et thérapie myofonctionnelle. Complément aux soins — ne remplace pas un suivi médical.</p>

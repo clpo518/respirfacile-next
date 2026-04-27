@@ -22,12 +22,12 @@ function PatientDashboardPreview() {
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-2">
         {[
-          { label: "Séances", value: "4/5", sub: "cette semaine", color: "text-forest-700" },
-          { label: "Score pause", value: "28 pas", sub: "↑ +6 vs S1", color: "text-copper-700" },
-          { label: "Série", value: "18 j.", sub: "consécutifs", color: "text-forest-700" },
+          { label: "4/5", sub: "séances faites", color: "text-forest-700" },
+          { label: "18 j.", sub: "sans interruption", color: "text-copper-700" },
+          { label: "+62%", sub: "de régularité", color: "text-forest-700" },
         ].map((s) => (
-          <div key={s.label} className="bg-beige-100 rounded-xl p-2.5 text-center">
-            <p className={`font-bold text-sm ${s.color}`}>{s.value}</p>
+          <div key={s.sub} className="bg-beige-100 rounded-xl p-2.5 text-center">
+            <p className={`font-bold text-sm ${s.color}`}>{s.label}</p>
             <p className="text-xs text-forest-500 leading-tight mt-0.5">{s.sub}</p>
           </div>
         ))}
@@ -37,18 +37,18 @@ function PatientDashboardPreview() {
       <div className="bg-copper-500/10 border border-copper-500/20 rounded-xl px-3 py-2 flex gap-2">
         <span className="text-base flex-shrink-0">🩺</span>
         <p className="text-xs text-forest-700 leading-relaxed">
-          <strong>Votre ortho :</strong> Belle progression sur la pause ! Essayez maintenant la Pause 25s.
+          <strong>Votre praticien :</strong> Excellente semaine Sophie ! Continuez comme ça, les résultats arrivent.
         </p>
       </div>
 
       {/* Exercises list */}
       <div className="flex-1 flex flex-col gap-1.5">
-        <p className="text-xs font-semibold text-forest-500 uppercase tracking-wide px-1">Vos exercices</p>
+        <p className="text-xs font-semibold text-forest-500 uppercase tracking-wide px-1">Vos exercices du jour</p>
         {[
-          { emoji: "💚", name: "Cohérence cardiaque 5-5", time: "5 min", done: true, diff: "Débutant" },
-          { emoji: "⏸️", name: "Pause 25 secondes", time: "10 min", done: false, diff: "Avancé" },
-          { emoji: "👅", name: "Langue au palais", time: "2 min", done: true, diff: "Débutant" },
-          { emoji: "🌬️", name: "Marche nasale", time: "3 min", done: false, diff: "Intermédiaire" },
+          { emoji: "💚", name: "Respiration calme 5 min", time: "5 min", done: true, diff: "Facile" },
+          { emoji: "🌬️", name: "Respiration par le nez", time: "3 min", done: true, diff: "Facile" },
+          { emoji: "🫁", name: "Exercice de retenue", time: "10 min", done: false, diff: "Intermédiaire" },
+          { emoji: "👅", name: "Posture de la langue", time: "2 min", done: false, diff: "Facile" },
         ].map((ex) => (
           <div
             key={ex.name}
@@ -182,7 +182,7 @@ function TherapistPreview() {
       <div className="grid grid-cols-3 gap-2">
         {[
           { label: "Séances ce mois", value: "94", color: "text-forest-700" },
-          { label: "Observance moy.", value: "78%", color: "text-forest-700" },
+          { label: "Régularité moy.", value: "78%", color: "text-forest-700" },
           { label: "Nouveaux patients", value: "+3", color: "text-copper-600" },
         ].map((s) => (
           <div key={s.label} className="bg-beige-100 rounded-xl p-2.5 text-center">
@@ -223,7 +223,7 @@ function TherapistPreview() {
       <div className="bg-forest-500/10 border border-forest-500/20 rounded-xl px-3 py-2.5 flex items-center gap-2">
         <span className="text-base">📄</span>
         <p className="text-xs text-forest-700 flex-1">
-          <strong>Sophie M.</strong> — Bilan PDF prêt à envoyer au médecin du sommeil
+          <strong>Sophie M.</strong> — Rapport de suivi prêt à envoyer au médecin
         </p>
         <div className="bg-forest-500 rounded-lg px-2 py-1 text-xs text-beige-100 font-medium whitespace-nowrap">
           Exporter

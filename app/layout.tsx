@@ -57,6 +57,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Respirfacile" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>
       <body className="font-sans antialiased">
         {children}

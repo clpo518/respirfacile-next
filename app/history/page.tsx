@@ -1,3 +1,4 @@
+import { LogoIcon } from "@/components/ui/Logo"
 import { createClient } from "@/lib/supabase/server"
 import { PatientNavbar } from "@/components/layout/PatientNavbar"
 import { redirect } from "next/navigation"
@@ -57,12 +58,7 @@ export default async function HistoryPage() {
       <header className="bg-white/90 backdrop-blur border-b border-stone-200 px-4 py-4 sticky top-0 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-75 transition-opacity">
-            <div className="w-7 h-7 rounded-full bg-[#2D5016] flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-                <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-              </svg>
-            </div>
+            <LogoIcon size={28} />
             <span className="font-semibold text-base text-stone-800">
               Respir<span className="text-[#8B4513]">facile</span>
             </span>

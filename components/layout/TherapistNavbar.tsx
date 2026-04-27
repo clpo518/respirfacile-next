@@ -1,4 +1,5 @@
-import Link from "next/link";
+import Link from "next/link"
+import { LogoIcon } from "@/components/ui/Logo";
 import { createClient } from "@/lib/supabase/server";
 
 export async function TherapistNavbar() {
@@ -22,15 +23,8 @@ export async function TherapistNavbar() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-3">
           <Link href="/therapist" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 rounded-full bg-forest-500 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-beige-100" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C8 2 5 6 5 10c0 3 1.5 5.5 4 7l3 2 3-2c2.5-1.5 4-4 4-7 0-4-3-8-7-8z" strokeLinecap="round"/>
-                <path d="M12 8v8M9 11h6" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <span className="font-semibold text-base text-forest-800">
-              Respir<span className="text-copper-500">facile</span>
-            </span>
+            <LogoIcon size={28} />
+            <span className="font-semibold text-base" style={{color:"#2D5016",letterSpacing:"-0.01em"}}>Respir<span style={{color:"#8B4513"}}>facile</span></span>
             <span className="hidden md:inline text-forest-400 text-xs ml-1">· Espace professionnel</span>
           </Link>
 
