@@ -46,6 +46,7 @@ const daysSinceDate = (dateStr?: string) => {
 
 export default function TherapistDashboardClient() {
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [patients, setPatients] = useState<PatientData[]>([]);
   const [journalEntries, setJournalEntries] = useState<TherapistJournalEntry[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -54,9 +55,16 @@ export default function TherapistDashboardClient() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
         setUser(user);
+        // Charger le profil depuis la table profiles
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('full_name, email, therapist_code')
+          .eq('id', user.id)
+          .single();
+        setProfile(prof);
         loadData(user.id, supabase);
       }
     });
@@ -181,7 +189,7 @@ export default function TherapistDashboardClient() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">
             <div>
               <h1 className="text-4xl font-bold text-forest-800 mb-1">
-                👋 Bonjour {user.user_metadata?.full_name?.split(' ')[0] || 'Dr'}
+                👋 Bonjour {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Dr'}
               </h1>
               <p className="text-forest-600">
                 {new Intl.DateTimeFormat('fr-FR', {
