@@ -41,7 +41,7 @@ export default async function JournalPage() {
             📓 Journal de bord
           </h1>
           <p className="text-forest-600">
-            Partage tes sensations, tes progrès et tes observations avec ton orthophoniste. C'est comme avoir une conversation régulière ensemble.
+            Partagez vos sensations, vos progrès et vos observations avec votre orthophoniste. C'est comme avoir une conversation régulière ensemble.
           </p>
         </div>
 

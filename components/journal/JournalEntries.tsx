@@ -40,8 +40,8 @@ export function JournalEntries({ entries }: JournalEntriesProps) {
     return (
       <div className="bg-beige-100 rounded-3xl border border-beige-300 p-12 shadow-beige text-center">
         <div className="text-5xl mb-4">📔</div>
-        <p className="font-semibold text-forest-800 mb-2">Ton journal est en attente...</p>
-        <p className="text-forest-600">Chaque semaine, partage tes sensations et tes observations. Ça aidera ton ortho à adapter ton programme.</p>
+        <p className="font-semibold text-forest-800 mb-2">Votre journal est en attente…</p>
+        <p className="text-forest-600">Chaque semaine, partagez vos sensations et vos observations. Cela aidera votre orthophoniste à adapter votre programme.</p>
       </div>
     );
   }

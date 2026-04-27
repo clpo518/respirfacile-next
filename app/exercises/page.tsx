@@ -147,7 +147,7 @@ export default async function ExercisesPage() {
           <div className="mb-6 bg-copper-500/10 border border-copper-500/20 rounded-2xl px-5 py-4 flex items-start gap-3 hover:shadow-md transition-shadow">
             <span className="text-lg mt-0.5">🩺</span>
             <p className="text-sm text-forest-700 leading-relaxed">
-              <strong>Message de ton ortho :</strong> {program.custom_notes}
+              <strong>Message de votre orthophoniste :</strong> {program.custom_notes}
             </p>
           </div>
         )}
@@ -262,11 +262,11 @@ export default async function ExercisesPage() {
           <div className="bg-beige-100 rounded-3xl border border-beige-300 p-12 text-center shadow-beige">
             <div className="text-5xl mb-4">🌱</div>
             <p className="font-semibold text-forest-700 mb-2">
-              Ton programme arrive bientôt
+              Votre programme arrive bientôt
             </p>
             <p className="text-sm text-forest-500 max-w-xs mx-auto leading-relaxed">
-              Ton orthophoniste finit de mettre en place ton programme
-              personnalisé. Tu recevras une notification dès qu'il sera prêt.
+              Votre orthophoniste finit de mettre en place votre programme
+              personnalisé. Vous recevrez une notification dès qu'il sera prêt.
             </p>
           </div>
         )}

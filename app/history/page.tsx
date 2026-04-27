@@ -84,7 +84,7 @@ export default async function HistoryPage() {
               Aucune séance pour l&apos;instant
             </h2>
             <p className="text-stone-500 mb-6">
-              Lance ta première séance pour commencer à voir ta progression ici.
+              Lancez votre première séance pour commencer à voir votre progression ici.
             </p>
             <Link
               href="/exercises"

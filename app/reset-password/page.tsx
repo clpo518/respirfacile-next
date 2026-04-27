@@ -32,7 +32,7 @@ export default function ResetPasswordPage() {
 
             {/* Header */}
             <h1 className="font-display text-3xl font-bold text-forest-800 mb-2">
-              🔐 Réinitialiser ton mot de passe
+              🔐 Réinitialiser votre mot de passe
             </h1>
             <p className="text-forest-500 text-sm mb-8">
               Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.

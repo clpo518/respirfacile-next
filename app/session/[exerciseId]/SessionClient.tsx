@@ -484,7 +484,7 @@ export default function SessionClient({
 
           {/* Sécurité médicale */}
           <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 max-w-sm text-sm text-amber-900 text-left">
-            💛 Si tu ressens des vertiges, une gêne ou des palpitations, c'est normal d'arrêter. Ton bien-être vient toujours en premier.
+            💛 Si vous ressentez des vertiges, une gêne ou des palpitations, c'est tout à fait normal d'arrêter. Votre bien-être vient toujours en premier.
           </div>
 
           <button
@@ -545,7 +545,7 @@ export default function SessionClient({
             {/* Additional hint for some steps */}
             {currentStep === 0 && (
               <div className="mt-4 text-center text-sm text-forest-500 animate-fade-in-scale" style={{ animationDelay: "0.2s" }}>
-                📖 Prends ton temps — tu peux revenir en arrière si tu veux
+                📖 Prenez votre temps — vous pouvez revenir en arrière si vous voulez
               </div>
             )}
           </div>
@@ -683,7 +683,7 @@ export default function SessionClient({
               Bravo ! C'est fait 💪
             </h2>
             <p className="text-forest-500">
-              Partage ton score pour suivre ta progression.
+              Votre score a été enregistré pour suivre votre progression.
             </p>
           </div>
 

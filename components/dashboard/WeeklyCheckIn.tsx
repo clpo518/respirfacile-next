@@ -25,8 +25,8 @@ export function WeeklyCheckIn({ hasJournalThisWeek = false }: WeeklyCheckInProps
     <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-semibold text-amber-900">Comment s&apos;est passée ta semaine ? 📝</p>
-          <p className="text-sm text-amber-700 mt-1">Partage ton ressenti avec ton orthophoniste</p>
+          <p className="font-semibold text-amber-900">Comment s&apos;est passée votre semaine ? 📝</p>
+          <p className="text-sm text-amber-700 mt-1">Partagez votre ressenti avec votre orthophoniste</p>
         </div>
         <Link
           href="/journal/new"
