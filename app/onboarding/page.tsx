@@ -15,30 +15,49 @@ interface OnboardingData {
   profileType: ProfileType;
   objective: string;
   availability: string;
-  exerciseStarted: boolean;
 }
 
 const PROFILE_OPTIONS = [
-  { value: "adult_saos_mild", label: "SAOS léger/modéré", icon: "🌙", desc: "Apnée du sommeil légère ou modérée" },
-  { value: "adult_saos_severe", label: "SAOS sévère", icon: "😴", desc: "Apnée sévère, sous appareillage (CPAP)" },
-  { value: "adult_tmof", label: "Rééducation oro-faciale", icon: "👅", desc: "Rééducation myofonctionnelle (TMOF)" },
-  { value: "adult_mixed", label: "SAOS + TMOF", icon: "🎯", desc: "Combinaison SAOS et rééducation" },
+  {
+    value: "adult_saos_mild",
+    label: "Je ronfle ou j'ai des apnées",
+    icon: "🌙",
+    desc: "Mon médecin a détecté de l'apnée du sommeil. Je ne porte pas de masque la nuit.",
+  },
+  {
+    value: "adult_saos_severe",
+    label: "J'ai des apnées et je porte un masque la nuit",
+    icon: "😴",
+    desc: "Je dors avec un appareil (CPAP). Mon praticien veut compléter avec des exercices.",
+  },
+  {
+    value: "adult_tmof",
+    label: "On m'a prescrit des exercices de bouche ou de langue",
+    icon: "👅",
+    desc: "Mon orthophoniste ou kiné m'a prescrit une rééducation. Pas forcément lié à l'apnée.",
+  },
+  {
+    value: "adult_mixed",
+    label: "J'ai les deux à la fois",
+    icon: "🎯",
+    desc: "J'ai de l'apnée du sommeil et des exercices de rééducation prescrits.",
+  },
 ];
 
 const OBJECTIVE_OPTIONS = [
   { value: "better_sleep", label: "Mieux dormir", icon: "💤" },
-  { value: "reduce_snoring", label: "Réduire les ronflements", icon: "🚫" },
-  { value: "improve_breathing", label: "Améliorer ma respiration nasale", icon: "👃" },
+  { value: "reduce_snoring", label: "Arrêter de ronfler", icon: "🔇" },
+  { value: "improve_breathing", label: "Mieux respirer au quotidien", icon: "👃" },
   { value: "prepare_surgery", label: "Préparer une opération", icon: "🏥" },
-  { value: "recover", label: "Récupération après appareillage", icon: "✨" },
-  { value: "other", label: "Autre objectif", icon: "🎯" },
+  { value: "recover", label: "Compléter mon traitement", icon: "✨" },
+  { value: "other", label: "Autre", icon: "🎯" },
 ];
 
 const AVAILABILITY_OPTIONS = [
-  { value: "morning", label: "Matin (avant 12h)", icon: "🌅" },
-  { value: "afternoon", label: "Après-midi (12h-18h)", icon: "☀️" },
-  { value: "evening", label: "Soir (après 18h)", icon: "🌙" },
-  { value: "flexible", label: "Variable / flexible", icon: "🔄" },
+  { value: "morning", label: "Le matin, avant de commencer la journée", icon: "🌅" },
+  { value: "afternoon", label: "L'après-midi", icon: "☀️" },
+  { value: "evening", label: "Le soir, avant de dormir", icon: "🌙" },
+  { value: "flexible", label: "Pas de créneau fixe — je m'adapte", icon: "🔄" },
 ];
 
 export default function OnboardingPage() {
@@ -47,6 +66,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState<OnboardingStep>(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [data, setData] = useState<OnboardingData>({
     full_name: "",
@@ -54,7 +74,6 @@ export default function OnboardingPage() {
     profileType: null,
     objective: "",
     availability: "",
-    exerciseStarted: false,
   });
 
   useEffect(() => {
@@ -66,19 +85,14 @@ export default function OnboardingPage() {
       }
       setUser(currentUser);
 
-      // Vérifier si l'utilisateur a déjà complété l'onboarding
       const { data: profile } = await supabase
         .from("profiles")
-        .select("*")
+        .select("full_name, age")
         .eq("id", currentUser.id)
         .single();
 
-      if (profile?.full_name) {
-        setData((prev) => ({ ...prev, full_name: profile.full_name }));
-      }
-      if (profile?.age) {
-        setData((prev) => ({ ...prev, age: profile.age }));
-      }
+      if (profile?.full_name) setData((prev) => ({ ...prev, full_name: profile.full_name }));
+      if (profile?.age) setData((prev) => ({ ...prev, age: profile.age }));
 
       setLoading(false);
     };
@@ -87,23 +101,25 @@ export default function OnboardingPage() {
   }, []);
 
   const handleNext = async () => {
-    if (step === 4) {
-      // Final step - save and redirect
-      setSaving(true);
+    if (step < 4) {
+      setStep((step + 1) as OnboardingStep);
+      return;
+    }
+
+    // Étape finale — sauvegarde
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ full_name: data.full_name, age: data.age })
+        .eq("id", user.id);
+
+      if (profileError) throw profileError;
+
+      // Tenter de créer le programme — ignorer si la table n'existe pas encore
       try {
-        // Update profile
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            full_name: data.full_name,
-            age: data.age,
-          })
-          .eq("id", user.id);
-
-        if (profileError) throw profileError;
-
-        // Create patient program
-        const { error: programError } = await supabase
+        await supabase
           .from("patient_programs")
           .insert({
             patient_id: user.id,
@@ -111,21 +127,13 @@ export default function OnboardingPage() {
             week_number: 1,
             is_active: true,
           });
+      } catch (_) { /* silencieux si table absente */ }
 
-        if (programError) throw programError;
-
-        // Redirect to first session if they want to start immediately
-        if (data.exerciseStarted) {
-          router.push("/session/coherence_5_5");
-        } else {
-          router.push("/dashboard");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la sauvegarde:", error);
-        setSaving(false);
-      }
-    } else {
-      setStep((step + 1) as OnboardingStep);
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Erreur onboarding:", err);
+      setSaveError("Une erreur est survenue. Réessaie ou passe cette étape.");
+      setSaving(false);
     }
   };
 
@@ -135,69 +143,74 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-beige-200 bg-texture flex items-center justify-center">
+      <div className="min-h-screen bg-beige-200 flex items-center justify-center">
         <div className="bg-beige-100 rounded-3xl border border-beige-300 p-10 animate-pulse">
-          <div className="h-8 bg-beige-300 rounded-xl mb-4 w-3/4" />
-          <div className="h-4 bg-beige-300 rounded-xl w-1/2" />
+          <div className="h-8 bg-beige-300 rounded-xl mb-4 w-48" />
+          <div className="h-4 bg-beige-300 rounded-xl w-32" />
         </div>
       </div>
     );
   }
 
+  const stepLabels = ["Toi", "Ta situation", "Ton objectif", "Ton rythme"];
+
   return (
-    <div className="min-h-screen bg-beige-200 bg-texture flex flex-col">
+    <div className="min-h-screen bg-beige-200 flex flex-col">
       {/* Header */}
-      <header className="w-full px-6 py-5 max-w-7xl mx-auto w-full">
+      <header className="w-full px-6 py-5 max-w-7xl mx-auto">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <LogoIcon size={28} />
-          <span style={{fontWeight:600,color:"#2D5016",letterSpacing:"-0.01em"}}>Respir<span style={{color:"#8B4513"}}>facile</span></span>
+          <span style={{ fontWeight: 600, color: "#2D5016", letterSpacing: "-0.01em" }}>
+            Respir<span style={{ color: "#8B4513" }}>facile</span>
+          </span>
         </Link>
       </header>
 
-      {/* Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-lg">
+
           {/* Stepper */}
-          <div className="flex items-center justify-between mb-12 px-2">
+          <div className="flex items-center justify-between mb-10 px-1">
             {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex items-center flex-1">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
-                    s === step
-                      ? "bg-forest-500 text-beige-100 ring-2 ring-forest-500/30"
-                      : s < step
-                      ? "bg-forest-500/20 text-forest-700"
-                      : "bg-beige-300 text-beige-600"
-                  }`}
-                >
-                  {s < step ? "✓" : s}
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                      s === step
+                        ? "bg-forest-700 text-white ring-4 ring-forest-700/20"
+                        : s < step
+                        ? "bg-forest-500/20 text-forest-700"
+                        : "bg-beige-300 text-beige-500"
+                    }`}
+                  >
+                    {s < step ? "✓" : s}
+                  </div>
+                  <span className={`text-xs hidden sm:block ${s === step ? "text-forest-700 font-medium" : "text-beige-500"}`}>
+                    {stepLabels[s - 1]}
+                  </span>
                 </div>
                 {s < 4 && (
-                  <div
-                    className={`flex-1 h-1 mx-3 rounded-full transition-all ${
-                      s < step ? "bg-forest-500/30" : "bg-beige-300"
-                    }`}
-                  />
+                  <div className={`flex-1 h-0.5 mx-2 mb-4 rounded-full transition-all ${s < step ? "bg-forest-500/40" : "bg-beige-300"}`} />
                 )}
               </div>
             ))}
           </div>
 
-          {/* Step 1: Profil */}
+          {/* Step 1 */}
           {step === 1 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-2">👋 Parlons de toi</h2>
-              <p className="text-forest-500 mb-8">Étape 1 sur 4</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">👋 Bienvenue !</h2>
+              <p className="text-forest-600 mb-8">On commence par faire connaissance. Ça prend 2 minutes.</p>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-forest-700 mb-2">Ton prénom et nom</label>
                   <input
                     type="text"
                     value={data.full_name}
                     onChange={(e) => setData({ ...data, full_name: e.target.value })}
-                    placeholder="ex: Jean Dupont"
-                    className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-beige-50 text-forest-800 placeholder-forest-400 focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-forest-500"
+                    placeholder="ex : Sophie Martin"
+                    className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white text-forest-800 placeholder-forest-400 focus:outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-500/20"
                   />
                 </div>
 
@@ -207,31 +220,30 @@ export default function OnboardingPage() {
                     type="number"
                     value={data.age || ""}
                     onChange={(e) => setData({ ...data, age: e.target.value ? parseInt(e.target.value) : null })}
-                    placeholder="ex: 45"
+                    placeholder="ex : 45"
                     min="18"
                     max="120"
-                    className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-beige-50 text-forest-800 placeholder-forest-400 focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-forest-500"
+                    className="w-full px-4 py-3 rounded-2xl border border-beige-300 bg-white text-forest-800 placeholder-forest-400 focus:outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-500/20"
                   />
+                  <p className="text-xs text-forest-500 mt-1.5">L'âge permet d'adapter les objectifs à ta situation.</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mt-8">
-                <button
-                  onClick={handleNext}
-                  disabled={!data.full_name || !data.age}
-                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-500 text-beige-100 hover:bg-forest-600 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Continuer →
-                </button>
-              </div>
+              <button
+                onClick={handleNext}
+                disabled={!data.full_name.trim() || !data.age}
+                className="w-full mt-8 px-6 py-4 rounded-2xl font-semibold transition-all bg-forest-700 text-white hover:bg-forest-800 hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Continuer →
+              </button>
             </div>
           )}
 
-          {/* Step 2: Profil médical */}
+          {/* Step 2 */}
           {step === 2 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-2">🩺 Ton diagnostic</h2>
-              <p className="text-forest-500 mb-8">Étape 2 sur 4</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🩺 Quelle est ta situation ?</h2>
+              <p className="text-forest-600 mb-6">Choisis ce qui te correspond le mieux — ton praticien pourra affiner ensuite.</p>
 
               <div className="space-y-3 mb-8">
                 {PROFILE_OPTIONS.map((option) => (
@@ -240,42 +252,39 @@ export default function OnboardingPage() {
                     onClick={() => setData({ ...data, profileType: option.value as ProfileType })}
                     className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-start gap-4 ${
                       data.profileType === option.value
-                        ? "border-forest-500 bg-forest-500/5"
-                        : "border-beige-300 hover:border-forest-300 bg-beige-50"
+                        ? "border-forest-600 bg-forest-500/5"
+                        : "border-beige-300 hover:border-forest-300 bg-white"
                     }`}
                   >
-                    <span className="text-2xl flex-shrink-0 mt-1">{option.icon}</span>
+                    <span className="text-2xl flex-shrink-0 mt-0.5">{option.icon}</span>
                     <div>
-                      <p className="font-semibold text-forest-800">{option.label}</p>
-                      <p className="text-sm text-forest-500 mt-0.5">{option.desc}</p>
+                      <p className="font-semibold text-forest-800 leading-snug">{option.label}</p>
+                      <p className="text-sm text-forest-600 mt-0.5 leading-relaxed">{option.desc}</p>
                     </div>
                   </button>
                 ))}
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-3 rounded-2xl font-semibold transition-all border-2 border-beige-300 text-forest-700 hover:border-forest-300 hover:bg-beige-50"
-                >
+              <div className="flex gap-3">
+                <button onClick={handleBack} className="px-5 py-3 rounded-2xl font-medium border-2 border-beige-300 text-forest-700 hover:border-forest-300 transition-all">
                   ← Retour
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={!data.profileType}
-                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-500 text-beige-100 hover:bg-forest-600 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-700 text-white hover:bg-forest-800 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Suivant →
+                  Continuer →
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Objectif */}
+          {/* Step 3 */}
           {step === 3 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-2">🎯 Ton objectif principal</h2>
-              <p className="text-forest-500 mb-8">Étape 3 sur 4 — optionnel</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">🎯 Qu'est-ce que tu veux améliorer ?</h2>
+              <p className="text-forest-600 mb-6">C'est optionnel — mais ça nous aide à personnaliser tes exercices.</p>
 
               <div className="space-y-3 mb-8">
                 {OBJECTIVE_OPTIONS.map((option) => (
@@ -285,7 +294,7 @@ export default function OnboardingPage() {
                     className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-3 ${
                       data.objective === option.value
                         ? "border-copper-500 bg-copper-500/5"
-                        : "border-beige-300 hover:border-copper-300 bg-beige-50"
+                        : "border-beige-300 hover:border-copper-300 bg-white"
                     }`}
                   >
                     <span className="text-xl">{option.icon}</span>
@@ -294,28 +303,25 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-3 rounded-2xl font-semibold transition-all border-2 border-beige-300 text-forest-700 hover:border-forest-300 hover:bg-beige-50"
-                >
+              <div className="flex gap-3">
+                <button onClick={handleBack} className="px-5 py-3 rounded-2xl font-medium border-2 border-beige-300 text-forest-700 hover:border-forest-300 transition-all">
                   ← Retour
                 </button>
                 <button
                   onClick={handleNext}
-                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-500 text-beige-100 hover:bg-forest-600 hover:shadow-md"
+                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-700 text-white hover:bg-forest-800"
                 >
-                  Suivant →
+                  {data.objective ? "Continuer →" : "Passer cette étape →"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 4: Disponibilité + Premier exercice */}
+          {/* Step 4 */}
           {step === 4 && (
             <div className="bg-beige-100 rounded-4xl border border-beige-300 p-8 shadow-beige">
-              <h2 className="font-display text-2xl font-bold text-forest-800 mb-2">⏰ Quand pratiquer ?</h2>
-              <p className="text-forest-500 mb-8">Étape 4 sur 4 — dernière étape !</p>
+              <h2 className="font-display text-2xl font-bold text-forest-800 mb-1">⏰ Quand tu auras du temps pour pratiquer ?</h2>
+              <p className="text-forest-600 mb-6">15 minutes suffisent. On te rappellera au bon moment.</p>
 
               <div className="space-y-3 mb-8">
                 {AVAILABILITY_OPTIONS.map((option) => (
@@ -324,8 +330,8 @@ export default function OnboardingPage() {
                     onClick={() => setData({ ...data, availability: option.value })}
                     className={`w-full p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-3 ${
                       data.availability === option.value
-                        ? "border-forest-500 bg-forest-500/5"
-                        : "border-beige-300 hover:border-forest-300 bg-beige-50"
+                        ? "border-forest-600 bg-forest-500/5"
+                        : "border-beige-300 hover:border-forest-300 bg-white"
                     }`}
                   >
                     <span className="text-xl">{option.icon}</span>
@@ -334,49 +340,40 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              {/* Checkbox pour commencer tout de suite */}
-              <div className="bg-forest-500/5 border border-forest-500/20 rounded-2xl p-4 mb-8">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={data.exerciseStarted}
-                    onChange={(e) => setData({ ...data, exerciseStarted: e.target.checked })}
-                    className="w-5 h-5 rounded border-beige-300 text-forest-500 cursor-pointer"
-                  />
-                  <span className="text-sm font-medium text-forest-700">
-                    ✨ Commencer mon premier exercice tout de suite (Cohérence Cardiaque)
-                  </span>
-                </label>
-              </div>
+              {saveError && (
+                <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+                  {saveError}
+                </div>
+              )}
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-3 rounded-2xl font-semibold transition-all border-2 border-beige-300 text-forest-700 hover:border-forest-300 hover:bg-beige-50"
-                >
+              <div className="flex gap-3">
+                <button onClick={handleBack} className="px-5 py-3 rounded-2xl font-medium border-2 border-beige-300 text-forest-700 hover:border-forest-300 transition-all">
                   ← Retour
                 </button>
                 <button
                   onClick={handleNext}
-                  disabled={!data.availability || saving}
-                  className="flex-1 px-6 py-3 rounded-2xl font-semibold transition-all bg-forest-500 text-beige-100 hover:bg-forest-600 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  disabled={saving}
+                  className="flex-1 px-6 py-4 rounded-2xl font-semibold transition-all bg-forest-700 text-white hover:bg-forest-800 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {saving ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-beige-100/30 border-t-beige-100 rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Enregistrement...
                     </>
                   ) : (
-                    <>
-                      🚀 Commencer
-                    </>
+                    data.availability ? "Accéder à mon programme →" : "Terminer →"
                   )}
                 </button>
               </div>
+
+              <p className="text-center text-xs text-forest-500 mt-4">
+                Tu pourras faire ton premier exercice depuis ton tableau de bord, quand tu veux.
+              </p>
             </div>
           )}
+
         </div>
       </div>
     </div>
-  )
+  );
 }
