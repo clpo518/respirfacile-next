@@ -7,17 +7,6 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-const formatDate = (iso: string) => {
-  return new Intl.DateTimeFormat("fr-FR", {
-    weekday: "short",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
-};
-
 export default async function NotesPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
@@ -55,9 +44,9 @@ export default async function NotesPage({ params }: Props) {
   if (!patient) notFound();
 
   // Récupérer les notes existantes (si table existe)
-  const { data: existingNotes = [] } = await supabase
+  const { data: existingNotes } = await supabase
     .from("session_notes")
-    .select("*")
+    .select("id, content, created_at, visible_to_patient")
     .eq("patient_id", id)
     .order("created_at", { ascending: false });
 
@@ -93,41 +82,12 @@ export default async function NotesPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Formulaire en bas avec Notes précédentes en haut */}
-        <div className="space-y-8">
-          {/* Notes précédentes */}
-          {existingNotes && existingNotes.length > 0 && (
-            <div className="bg-white rounded-3xl border border-beige-200 p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-forest-800 mb-6">Historique des notes</h2>
-              <div className="space-y-4">
-                {existingNotes.map((note: any) => (
-                  <div
-                    key={note.id}
-                    className="p-6 rounded-2xl border border-beige-200 bg-beige-50 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <p className="text-sm font-semibold text-forest-800">
-                        {formatDate(note.created_at)}
-                      </p>
-                      {note.visible_to_patient && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                          👁️ Visible patient
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-forest-700 whitespace-pre-wrap">{note.content}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Formulaire d'ajout de note */}
-          <div className="bg-white rounded-3xl border border-beige-200 p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-forest-800 mb-6">Ajouter une note</h2>
-            <NotesForm patientId={id} therapistId={user.id} patientName={patient.full_name || patient.email} />
-          </div>
-        </div>
+        <NotesForm
+          patientId={id}
+          therapistId={user.id}
+          patientName={patient.full_name || patient.email}
+          initialNotes={existingNotes || []}
+        />
       </main>
     </div>
   );
